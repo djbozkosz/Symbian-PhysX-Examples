@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<build xmlns="http://symbian.com/xml/build" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symbian.com/xml/build ../../schema/build/2_0.xsd">
+	<!-- build variant for GCCE ARM toolchains -->
+	<var name="gcce4_4_1_custom" extends="gcce4_4_1">
+		<set name="RW_BASE" value="$(RW_BASE_OPTION)0x1000000"/>
+	</var>
+</build>

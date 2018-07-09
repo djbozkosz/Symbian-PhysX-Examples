@@ -1,0 +1,11 @@
+moc/*.cpp
+rcc/*.cpp
+Makefile
+.make.cache
+bld.inf
+*.loc
+*.mmp
+*.pkg
+*.rss
+*.user
+*.sis
