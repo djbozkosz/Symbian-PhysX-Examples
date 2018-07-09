@@ -84,16 +84,16 @@ void SampleBase::Simulate()
 	emit Simulated();
 }
 
-void SampleBase::AddBox(physx::PxRigidActor* actor, const QVector3D& color)
+void SampleBase::AddBox(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
-	emit ActorBoxAdded(&m_Actors.back(), color);
+	emit ActorBoxAdded(&m_Actors.back(), color, tiling);
 }
 
-void SampleBase::AddMesh(physx::PxRigidActor* actor, const QVector3D& color)
+void SampleBase::AddMesh(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
-	emit ActorMeshAdded(&m_Actors.back(), color);
+	emit ActorMeshAdded(&m_Actors.back(), color, tiling);
 }
 
 void SampleBase::AddActor(physx::PxRigidActor *actor)

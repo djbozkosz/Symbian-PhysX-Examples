@@ -89,13 +89,13 @@ class SampleBase : public QObject
 
 	void Simulated();
 
-	void ActorBoxAdded(const ISceneObjectProvider* actor, const QVector3D& color);
-	void ActorMeshAdded(const ISceneObjectProvider* actor, const QVector3D& color);
+	void ActorBoxAdded(const ISceneObjectProvider* actor, const QVector3D& color, const QVector2D& tiling);
+	void ActorMeshAdded(const ISceneObjectProvider* actor, const QVector3D& color, const QVector2D& tiling);
 
 	protected:
 
-	void AddBox(physx::PxRigidActor *actor, const QVector3D &color);
-	void AddMesh(physx::PxRigidActor *actor, const QVector3D &color);
+	void AddBox(physx::PxRigidActor *actor, const QVector3D &color, const QVector2D &tiling);
+	void AddMesh(physx::PxRigidActor *actor, const QVector3D &color, const QVector2D &tiling);
 
 	private slots:
 

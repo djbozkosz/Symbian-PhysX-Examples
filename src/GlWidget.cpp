@@ -1,8 +1,9 @@
 #include "GlWidget.h"
 
-GlWidget::GlWidget(QWidget* parent) :
+GlWidget::GlWidget(QWidget* parent, QSplashScreen *splash, uint splashDelayMs) :
 	QGLWidget(parent),
-	m_CameraPosition(9.0f, -7.5f, -1.0f),
+	m_Splash(splash),
+	m_CameraPosition(-1.0f, 8.5f, 9.0f),
 	m_VertexShader(0),
 	m_FragmentShader(0),
 	m_ShaderProgram(0),
@@ -14,8 +15,12 @@ GlWidget::GlWidget(QWidget* parent) :
 	m_UniformMNIT(-1),
 	m_UniformDiffuseTexture(-1),
 	m_UniformCamera(-1),
-	m_UniformColor(-1)
+	m_UniformColor(-1),
+	m_UniformTiling(-1),
+	m_GridTexture(0)
 {
+	setAttribute(Qt::WA_LockLandscapeOrientation);
+	QTimer::singleShot(splashDelayMs, this, SLOT(Initialize()));
 }
 
 GlWidget::~GlWidget()
@@ -28,6 +33,8 @@ GlWidget::~GlWidget()
 	glDeleteProgram(m_ShaderProgram);
 	glDeleteShader(m_VertexShader);
 	glDeleteShader(m_FragmentShader);
+
+	glDeleteTextures(1, &m_GridTexture);
 }
 
 void GlWidget::initializeGL()
@@ -65,29 +72,31 @@ void GlWidget::initializeGL()
 		"\n"
 		"uniform vec3 cam;\n"
 		"uniform vec3 color;\n"
+		"uniform vec2 tiling;\n"
 		"\n"
 		"void main()\n"
 		"{\n"
-		"	vec3 ambColor       = vec3(0.3, 0.4, 0.5);\n"
-		"	vec3 lightPos       = vec3(10.0, 10.0, 10.0);\n"
-		"	vec2 lightRange     = vec2(1.0, 50.0);\n"
-		"	vec3 lightColor     = vec3(1.5, 1.2, 1.0);\n"
-		"	vec4 lightSpecColor = vec4(1.0, 1.0, 1.0, 8.0);\n"
+		"	vec3  ambColor       = vec3(0.3, 0.4, 0.5);\n"
+		"	vec3  lightPos       = vec3(-7.0, 10.0, -10.0);\n"
+		"	vec2  lightRange     = vec2(1.0, 50.0);\n"
+		"	vec3  lightColor     = vec3(1.5, 1.2, 1.0);\n"
+		"	vec4  lightSpecColor = vec4(1.0, 1.0, 1.0, 16.0);\n"
 		"\n"
-		"	vec3 diffuse        = color; /*texture2D(diffTex, texCoord).rgb;*/\n"
+		"	vec3  diffuse        = texture2D(diffTex, texCoord * tiling).rgb;\n"
+		"	float diffuseGray    = diffuse.r * 0.3 + diffuse.g * 0.59 + diffuse.b * 0.11;\n"
 		"\n"
-		"	vec3 viewDir        = normalize(cam - positionWorld);\n"
-		"	vec3 lightDir       = lightPos - positionWorld;\n"
+		"	vec3  viewDir        = normalize(cam - positionWorld);\n"
+		"	vec3  lightDir       = lightPos - positionWorld;\n"
 		"\n"
-		"	float lightDist     = clamp((length(lightDir) - lightRange.x) / (lightRange.y - lightRange.x) * -1.0 + 1.0, 0.0, 1.0);\n"
-		"	lightDir            = normalize(lightDir);\n"
-		"	float lightDot      = max(0.0, dot(normalDir, lightDir));\n"
-		"	float lightSpecDot  = max(0.0, dot(normalDir, normalize(lightDir + viewDir)));\n"
+		"	float lightDist      = clamp((length(lightDir) - lightRange.x) / (lightRange.y - lightRange.x) * -1.0 + 1.0, 0.0, 1.0);\n"
+		"	lightDir             = normalize(lightDir);\n"
+		"	float lightDot       = max(0.0, dot(normalDir, lightDir));\n"
+		"	float lightSpecDot   = max(0.0, dot(normalDir, normalize(lightDir + viewDir)));\n"
 		"\n"
-		"	vec3 colorDiff      = lightColor * lightDot * lightDist + ambColor;\n"
-		"	vec3 colorSpec      = lightSpecColor.rgb * pow(lightSpecDot, lightSpecColor.a) * lightDist;\n"
+		"	vec3  colorDiff      = lightColor * lightDot * lightDist + ambColor;\n"
+		"	vec3  colorSpec      = lightSpecColor.rgb * pow(lightSpecDot, lightSpecColor.a) * lightDist;\n"
 		"\n"
-		"	gl_FragColor        = vec4(diffuse * colorDiff + colorSpec, 1.0);\n"
+		"	gl_FragColor         = vec4(diffuse * color * colorDiff + diffuseGray * colorSpec, 1.0);\n"
 		"}\n"
 	};
 
@@ -106,6 +115,7 @@ void GlWidget::initializeGL()
 	m_UniformDiffuseTexture = glGetUniformLocation(m_ShaderProgram, "diffTex");
 	m_UniformCamera         = glGetUniformLocation(m_ShaderProgram, "cam");
 	m_UniformColor          = glGetUniformLocation(m_ShaderProgram, "color");
+	m_UniformTiling         = glGetUniformLocation(m_ShaderProgram, "tiling");
 
 	const float CUBE_VERTICE[] =
 	{
@@ -169,8 +179,27 @@ void GlWidget::initializeGL()
 
 	m_CameraView.setToIdentity();
 	m_CameraView.rotate(40.0f, 1.0f, 0.0f, 0.0f);
-	m_CameraView.rotate(80.0f, 0.0f, 1.0f, 0.0f);
-	m_CameraView.translate(m_CameraPosition);
+	m_CameraView.rotate(10.0f, 0.0f, 1.0f, 0.0f);
+	m_CameraView.translate(-m_CameraPosition);
+
+	glGenTextures(1, &m_GridTexture);
+	glBindTexture(GL_TEXTURE_2D, m_GridTexture);
+
+	QImage gridImage(":/images/uv.png");
+	gridImage = gridImage.convertToFormat(QImage::Format_RGB32);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gridImage.width(), gridImage.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, gridImage.constBits());
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if(m_Splash != NULL)
+	{
+		m_Splash->close();
+	}
 
 	emit Initialized();
 }
@@ -189,6 +218,10 @@ void GlWidget::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(m_ShaderProgram);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_GridTexture);
+	glUniform1i(m_UniformDiffuseTexture, 0);
 
 	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
@@ -214,6 +247,7 @@ void GlWidget::paintGL()
 
 		glUniform3f(m_UniformCamera, m_CameraPosition.x(), m_CameraPosition.y(), m_CameraPosition.z());
 		glUniform3f(m_UniformColor, object->Color.x(), object->Color.y(), object->Color.z());
+		glUniform2f(m_UniformTiling, object->Tiling.x(), object->Tiling.y());
 
 		glDrawElements(GL_TRIANGLES, object->Faces * 3, GL_UNSIGNED_SHORT, NULL);
 
@@ -225,10 +259,13 @@ void GlWidget::paintGL()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glUseProgram(0);
 }
 
-void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector3D& color)
+void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector3D& color, const QVector2D& tiling)
 {
 	m_RenderObjects.push_back(RenderObject
 	{
@@ -236,12 +273,18 @@ void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector3D& 
 		m_CubeIndices,
 		12,
 		color,
+		tiling,
 		sceneObject
 	});
 }
 
-void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color)
+void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling)
 {
+}
+
+void GlWidget::Initialize()
+{
+	showFullScreen();
 }
 
 GLuint GlWidget::CreateShader(const char *shaderText, GLenum type)

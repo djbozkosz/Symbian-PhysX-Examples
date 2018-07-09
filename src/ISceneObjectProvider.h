@@ -1,6 +1,7 @@
 #ifndef ISCENEOBJECTPROVIDER_H
 #define ISCENEOBJECTPROVIDER_H
 
+#include <QVector2D>
 #include <QVector3D>
 #include <QMatrix4x4>
 

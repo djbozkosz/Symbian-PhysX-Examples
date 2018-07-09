@@ -3,6 +3,8 @@
 
 #include <QDebug>
 #include <QGLWidget>
+#include <QSplashScreen>
+#include <QImage>
 
 #include <QVector2D>
 #include <QVector3D>
@@ -12,6 +14,8 @@
 #include <QQuaternion>
 
 #include <QVector>
+
+#include <QTimer>
 
 #include <GLES2/gl2.h>
 
@@ -33,11 +37,14 @@ class GlWidget : public QGLWidget
 		GLuint                      Indices;
 		uint                        Faces;
 		QVector3D                   Color;
+		QVector2D                   Tiling;
 
 		const ISceneObjectProvider* SceneObject;
 	};
 
 	private:
+
+	QSplashScreen*        m_Splash;
 
 	QVector<GLuint>       m_VertexBuffers;
 	QVector<RenderObject> m_RenderObjects;
@@ -62,13 +69,16 @@ class GlWidget : public QGLWidget
 	GLint                 m_UniformDiffuseTexture;
 	GLint                 m_UniformCamera;
 	GLint                 m_UniformColor;
+	GLint                 m_UniformTiling;
 
 	GLuint                m_CubeVertices;
 	GLuint                m_CubeIndices;
 
+	GLuint                m_GridTexture;
+
 	public:
 
-	explicit GlWidget(QWidget *parent = NULL);
+	explicit GlWidget(QWidget *parent = NULL, QSplashScreen *splash = NULL, uint splashDelayMs = 5000);
 	virtual ~GlWidget();
 
 	protected: // QGLWidget implementation
@@ -79,8 +89,12 @@ class GlWidget : public QGLWidget
 
 	public slots:
 
-	void AddBox(const ISceneObjectProvider* sceneObject, const QVector3D &color);
-	void AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color);
+	void AddBox(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling);
+	void AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D& tiling);
+
+	private slots:
+
+	void Initialize();
 
 	signals:
 

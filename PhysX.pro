@@ -10,12 +10,14 @@ TEMPLATE = app
 
 SOURCES += \
 	src/main.cpp \
+	src/Splash.cpp \
 	src/GlWidget.cpp \
 	src/SampleBase.cpp \
 	src/Sample00.cpp
 
 HEADERS += \
 	src/ISceneObjectProvider.h \
+	src/Splash.h \
 	src/GlWidget.h \
 	src/SampleBase.h \
 	src/Sample00.h
