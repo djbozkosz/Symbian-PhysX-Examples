@@ -18,7 +18,7 @@ class Sample00 : public SampleBase
 
 	protected:
 
-	static const uint      BOXES_COUNT = 10;
+	static const uint      BOXES_COUNT = 100;
 
 	physx::PxMaterial*     m_Material;
 
