@@ -1,0 +1,3 @@
+[submodule "src/PhysX"]
+	path = src/PhysX
+	url = https://github.com/djbozkosz/PhysX-3.4.git
