@@ -5,7 +5,7 @@ QT += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = PhysX
+TARGET = PhysXExamples
 TEMPLATE = app
 
 SOURCES += \
@@ -23,8 +23,8 @@ HEADERS += \
 	src/Sample00.h
 
 INCLUDEPATH += \
-	../PhysX_3.4/include \
-	../PxShared/include
+	src/PhysX/PhysX_3.4/include \
+	src/PhysX/PxShared/include
 
 QMAKE_CXXFLAGS += -Wall
 QMAKE_CXXFLAGS += -Wextra
@@ -66,7 +66,7 @@ LIBS += \
 	-lusrt3_1.lib
 
 symbian {
-	DEPLOYMENT.display_name = PhysX
+	DEPLOYMENT.display_name = PhysX Examples
 	VERSION = 0.0.1
 	TARGET.UID3 = 0xAC928603
 	TARGET.EPOCSTACKSIZE = 0x16000
