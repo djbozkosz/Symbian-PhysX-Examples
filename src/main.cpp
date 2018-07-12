@@ -4,7 +4,8 @@
 
 #include "Splash.h"
 #include "GlWidget.h"
-#include "Sample00.h"
+#include "Physics.h"
+#include "Scene00.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,16 +18,18 @@ int main(int argc, char *argv[])
 
 	application.processEvents();
 
-	Sample00 sample00;
-	GlWidget glWidget(NULL, &splash, 2000);
+	GlWidget glWidget(&splash, 2000);
+	Physics  physics;
+	Scene00  sample00(&physics);
 
-	QObject::connect(&sample00, SIGNAL(Simulated()), &glWidget, SLOT(update()));
-	QObject::connect(&sample00, SIGNAL(ActorBoxAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddBox(const ISceneObjectProvider*, QVector3D, QVector2D)));
-	QObject::connect(&sample00, SIGNAL(ActorMeshAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddMesh(const ISceneObjectProvider*, QVector3D, QVector2D)));
+	QObject::connect(&physics, SIGNAL(Simulated()), &glWidget, SLOT(update()));
+	QObject::connect(&physics, SIGNAL(ActorBoxAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddBox(const ISceneObjectProvider*, QVector3D, QVector2D)));
+	QObject::connect(&physics, SIGNAL(ActorMeshAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddMesh(const ISceneObjectProvider*, QVector3D, QVector2D)));
 
-	QObject::connect(&glWidget, SIGNAL(Initialized()), &sample00, SLOT(Initialize()));
+	QObject::connect(&glWidget, SIGNAL(Initialized()), &physics, SLOT(Initialize()));
 
 	// delayed glWidget show in Initialize()
+	glWidget.AddScene(&sample00);
 
 	return application.exec();
 }

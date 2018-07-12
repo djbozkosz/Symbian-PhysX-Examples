@@ -12,15 +12,18 @@ SOURCES += \
 	src/main.cpp \
 	src/Splash.cpp \
 	src/GlWidget.cpp \
-	src/SampleBase.cpp \
-	src/Sample00.cpp
+	src/Physics.cpp \
+	src/SceneBase.cpp \
+	src/Scene00.cpp
 
 HEADERS += \
+	src/ISceneProvider.h \
 	src/ISceneObjectProvider.h \
 	src/Splash.h \
 	src/GlWidget.h \
-	src/SampleBase.h \
-	src/Sample00.h
+	src/Physics.h \
+	src/SceneBase.h \
+	src/Scene00.h
 
 INCLUDEPATH += \
 	src/PhysX/PhysX_3.4/include \
@@ -71,6 +74,7 @@ symbian {
 	TARGET.UID3 = 0xAC928603
 	TARGET.EPOCSTACKSIZE = 0x16000
 	TARGET.EPOCHEAPSIZE = 0x200000 0x20000000
+	ICON = images/icon.svg
 }
 
 RESOURCES += \

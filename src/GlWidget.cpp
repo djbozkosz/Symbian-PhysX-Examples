@@ -1,6 +1,6 @@
 #include "GlWidget.h"
 
-GlWidget::GlWidget(QWidget* parent, QSplashScreen *splash, uint splashDelayMs) :
+GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
 	QGLWidget(parent),
 	m_Splash(splash),
 	m_CameraPosition(-1.0f, 8.5f, 9.0f),
@@ -35,6 +35,11 @@ GlWidget::~GlWidget()
 	glDeleteShader(m_FragmentShader);
 
 	glDeleteTextures(1, &m_GridTexture);
+}
+
+void GlWidget::AddScene(ISceneProvider *scene)
+{
+	m_Scenes.push_back(scene);
 }
 
 void GlWidget::initializeGL()
@@ -202,6 +207,11 @@ void GlWidget::initializeGL()
 	}
 
 	emit Initialized();
+
+	if(m_Scenes.size() > 0 && m_Scenes[0] != NULL)
+	{
+		m_Scenes[0]->Initialize();
+	}
 }
 
 void GlWidget::resizeGL(int w, int h)

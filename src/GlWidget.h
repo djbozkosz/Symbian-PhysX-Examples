@@ -19,6 +19,7 @@
 
 #include <GLES2/gl2.h>
 
+#include "ISceneProvider.h"
 #include "ISceneObjectProvider.h"
 
 class GlWidget : public QGLWidget
@@ -45,6 +46,8 @@ class GlWidget : public QGLWidget
 	private:
 
 	QSplashScreen*        m_Splash;
+
+	QVector<ISceneProvider*> m_Scenes;
 
 	QVector<GLuint>       m_VertexBuffers;
 	QVector<RenderObject> m_RenderObjects;
@@ -78,8 +81,10 @@ class GlWidget : public QGLWidget
 
 	public:
 
-	explicit GlWidget(QWidget *parent = NULL, QSplashScreen *splash = NULL, uint splashDelayMs = 5000);
+	explicit GlWidget(QSplashScreen *splash = NULL, uint splashDelayMs = 5000, QWidget *parent = NULL);
 	virtual ~GlWidget();
+
+	void AddScene(ISceneProvider *scene);
 
 	protected: // QGLWidget implementation
 

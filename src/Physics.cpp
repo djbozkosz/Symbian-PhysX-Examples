@@ -1,4 +1,4 @@
-#include "SampleBase.h"
+#include "Physics.h"
 
 void ErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line)
 {
@@ -34,75 +34,76 @@ void AllocatorCallback::deallocate(void* ptr)
 	free(reinterpret_cast<void*>(unaligned));
 }
 
-SampleBase::SampleBase(QObject *parent) :
+Physics::Physics(QObject *parent) :
 	QObject(parent),
 	m_Foundation(NULL),
 	m_Physics(NULL),
 	m_Cooking(NULL),
-	m_Scene(NULL)
+	m_ActiveScene(NULL)
 {
 }
 
-SampleBase::~SampleBase()
+Physics::~Physics()
 {
 	m_Timer.stop();
 
-	foreach(actor, m_Actors)
-	{
-		actor->RigidActor->release();
-	}
-
-	m_Scene->release();
 	PxCloseExtensions();
 	m_Physics->release();
 	m_Foundation->release();
 }
 
-void SampleBase::Initialize()
+void Physics::Initialize()
 {
 	m_Foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, m_AllocatorCallback, m_ErrorCallback);
 	m_Physics    = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale());
 	m_Cooking    = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, physx::PxCookingParams(m_Physics->getTolerancesScale()));
 	PxInitExtensions(*m_Physics, NULL);
 
-	physx::PxSceneDesc sceneDescriptor(m_Physics->getTolerancesScale());
-	sceneDescriptor.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-	sceneDescriptor.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
-	sceneDescriptor.filterShader  = &physx::PxDefaultSimulationFilterShader;
-	m_Scene      = m_Physics->createScene(sceneDescriptor);
-
 	m_Timer.setInterval(16);
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(Simulate()));
 	m_Timer.start();
 }
 
-void SampleBase::Simulate()
-{
-	m_Scene->simulate(1.0f / 60.0f);
-	m_Scene->fetchResults(true);
-
-	emit Simulated();
-}
-
-void SampleBase::AddBox(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
+void Physics::AddBox(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
 	emit ActorBoxAdded(&m_Actors.back(), color, tiling);
 }
 
-void SampleBase::AddMesh(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
+void Physics::AddMesh(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
 	emit ActorMeshAdded(&m_Actors.back(), color, tiling);
 }
 
-void SampleBase::AddActor(physx::PxRigidActor *actor)
+void Physics::CleanActors()
 {
-	m_Actors.push_back(Actor(actor));
-	m_Scene->addActor(*actor);
+	foreach(actor, m_Actors)
+	{
+		actor->RigidActor->release();
+	}
+
+	m_Actors.clear();
 }
 
-QMatrix4x4 SampleBase::Actor::GetTransform() const
+void Physics::Simulate()
+{
+	if(m_ActiveScene != NULL)
+	{
+		m_ActiveScene->simulate(1.0f / 60.0f);
+		m_ActiveScene->fetchResults(true);
+	}
+
+	emit Simulated();
+}
+
+void Physics::AddActor(physx::PxRigidActor *actor)
+{
+	m_Actors.push_back(Actor(actor));
+	m_ActiveScene->addActor(*actor);
+}
+
+QMatrix4x4 Physics::Actor::GetTransform() const
 {
 	physx::PxTransform pxTransform = RigidActor->getGlobalPose();
 	QMatrix4x4 transform;
@@ -125,22 +126,22 @@ QMatrix4x4 SampleBase::Actor::GetTransform() const
 	return transform;
 }
 
-QVector<QVector3D> SampleBase::Actor::GetMeshPositions() const
+QVector<QVector3D> Physics::Actor::GetMeshPositions() const
 {
 	return QVector<QVector3D>();
 }
 
-QVector<QVector3D> SampleBase::Actor::GetMeshNormals() const
+QVector<QVector3D> Physics::Actor::GetMeshNormals() const
 {
 	return QVector<QVector3D>();
 }
 
-QVector<QVector3D> SampleBase::Actor::GetMeshTextureCoords() const
+QVector<QVector3D> Physics::Actor::GetMeshTextureCoords() const
 {
 	return QVector<QVector3D>();
 }
 
-QVector<ushort> SampleBase::Actor::GetIndices() const
+QVector<ushort> Physics::Actor::GetIndices() const
 {
 	return QVector<ushort>();
 }
