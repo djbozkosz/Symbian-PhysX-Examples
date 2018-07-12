@@ -17,6 +17,8 @@
 
 #include <QTimer>
 
+#include <QPushButton>
+
 #include <GLES2/gl2.h>
 
 #include "ISceneProvider.h"
@@ -27,6 +29,9 @@ class GlWidget : public QGLWidget
 	private:
 
 	Q_OBJECT
+
+	static const uint BUTTON_WIDTH  = 50;
+	static const uint BUTTON_HEIGHT = 50;
 
 	protected:
 
@@ -45,39 +50,46 @@ class GlWidget : public QGLWidget
 
 	private:
 
-	QSplashScreen*        m_Splash;
+	QSplashScreen*           m_Splash;
+
+	QPushButton*             m_PrevSceneButton;
+	QPushButton*             m_NextSceneButton;
 
 	QVector<ISceneProvider*> m_Scenes;
+	int                      m_ActiveSceneIdx;
 
-	QVector<GLuint>       m_VertexBuffers;
-	QVector<RenderObject> m_RenderObjects;
+	QVector<GLuint>          m_VertexBuffers;
+	QVector<RenderObject>    m_RenderObjects;
 
-	QVector3D             m_CameraPosition;
-	QMatrix4x4            m_CameraView;
-	QMatrix4x4            m_CameraProjetion;
-	QMatrix4x4            m_CameraViewProjetion;
+	QVector3D                m_CameraPosition;
+	QMatrix4x4               m_CameraView;
+	QMatrix4x4               m_CameraProjetion;
+	QMatrix4x4               m_CameraViewProjetion;
 
-	GLuint                m_VertexShader;
-	GLuint                m_FragmentShader;
-	GLuint                m_ShaderProgram;
+	GLuint                   m_VertexShader;
+	GLuint                   m_FragmentShader;
+	GLuint                   m_ShaderProgram;
 
-	GLint                 m_AttributePosition;
-	GLint                 m_AttributeNormal;
-	GLint                 m_AttributeTextureCoord;
+	GLint                    m_AttributePosition;
+	GLint                    m_AttributeNormal;
+	GLint                    m_AttributeTextureCoord;
 
-	GLint                 m_UniformMVP;
-	GLint                 m_UniformMW;
-	GLint                 m_UniformMNIT;
+	GLint                    m_UniformMVP;
+	GLint                    m_UniformMW;
+	GLint                    m_UniformMNIT;
 
-	GLint                 m_UniformDiffuseTexture;
-	GLint                 m_UniformCamera;
-	GLint                 m_UniformColor;
-	GLint                 m_UniformTiling;
+	GLint                    m_UniformDiffuseTexture;
+	GLint                    m_UniformCamera;
+	GLint                    m_UniformColor;
+	GLint                    m_UniformTiling;
 
-	GLuint                m_CubeVertices;
-	GLuint                m_CubeIndices;
+	GLuint                   m_CubeVertices;
+	GLuint                   m_CubeIndices;
 
-	GLuint                m_GridTexture;
+	GLuint                   m_SphereVertices;
+	GLuint                   m_SphereIndices;
+
+	GLuint                   m_GridTexture;
 
 	public:
 
@@ -94,12 +106,16 @@ class GlWidget : public QGLWidget
 
 	public slots:
 
-	void AddBox(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling);
-	void AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D& tiling);
+	void AddBox  (const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling);
+	void AddSpere(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling);
+	void AddMesh (const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D& tiling);
 
 	private slots:
 
 	void Initialize();
+
+	void ActivatePrevScene();
+	void ActivateNextScene();
 
 	signals:
 

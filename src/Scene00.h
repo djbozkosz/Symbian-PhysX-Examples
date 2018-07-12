@@ -16,7 +16,7 @@ class Scene00 : public SceneBase
 
 	Q_OBJECT
 
-	static const uint      BOXES_COUNT = 100;
+	static const uint BOXES_COUNT = 100;
 
 	public:
 

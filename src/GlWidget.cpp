@@ -3,6 +3,9 @@
 GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
 	QGLWidget(parent),
 	m_Splash(splash),
+	m_PrevSceneButton(new QPushButton("«", this)),
+	m_NextSceneButton(new QPushButton("»", this)),
+	m_ActiveSceneIdx(0),
 	m_CameraPosition(-1.0f, 8.5f, 9.0f),
 	m_VertexShader(0),
 	m_FragmentShader(0),
@@ -17,9 +20,17 @@ GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
 	m_UniformCamera(-1),
 	m_UniformColor(-1),
 	m_UniformTiling(-1),
+	m_CubeVertices(0),
+	m_CubeIndices(0),
+	m_SphereVertices(0),
+	m_SphereIndices(0),
 	m_GridTexture(0)
 {
 	setAttribute(Qt::WA_LockLandscapeOrientation);
+
+	connect(m_PrevSceneButton, SIGNAL(clicked()), this, SLOT(ActivatePrevScene()));
+	connect(m_NextSceneButton, SIGNAL(clicked()), this, SLOT(ActivateNextScene()));
+
 	QTimer::singleShot(splashDelayMs, this, SLOT(Initialize()));
 }
 
@@ -122,7 +133,7 @@ void GlWidget::initializeGL()
 	m_UniformColor          = glGetUniformLocation(m_ShaderProgram, "color");
 	m_UniformTiling         = glGetUniformLocation(m_ShaderProgram, "tiling");
 
-	const float CUBE_VERTICE[] =
+	const float CUBE_VERTICES[] =
 	{
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
@@ -168,7 +179,7 @@ void GlWidget::initializeGL()
 
 	glGenBuffers(1, &m_CubeVertices);
 	glBindBuffer(GL_ARRAY_BUFFER, m_CubeVertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 24, CUBE_VERTICE, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 24, CUBE_VERTICES, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &m_CubeIndices);
@@ -178,6 +189,90 @@ void GlWidget::initializeGL()
 
 	m_VertexBuffers.push_back(m_CubeVertices);
 	m_VertexBuffers.push_back(m_CubeIndices);
+
+	const float SPHERE_VERTICES[] =
+	{
+		-0.801892f, -0.710229f, -0.00117253f, -0.382683f, -0.92388f, 0.0f, 0.0f, 0.0f,
+		-0.408369f, -0.710229f, 0.68043f, -0.191342f, -0.92388f, 0.331414f, 0.0f, 0.0f,
+		-1.16365f, 0.0f, -0.000717035f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.582664f, 0.0f, 1.00558f, -0.5f, 0.0f, 0.866025f, 0.0f, 0.0f,
+		0.378678f, -0.710229f, 0.68043f, 0.191342f, -0.92388f, 0.331414f, 0.0f, 0.0f,
+		0.579302f, 0.0f, 1.00558f, 0.5f, 0.0f, 0.866025f, 0.0f, 0.0f,
+		0.772201f, -0.710229f, -0.0011726f, 0.382683f, -0.92388f, -3.35276e-008f, 0.0f, 0.0f,
+		1.16029f, 0.0f, -0.000717136f, 1.0f, 0.0f, -8.75443e-008f, 0.0f, 0.0f,
+		0.378678f, -0.710229f, -0.682775f, 0.191342f, -0.92388f, -0.331414f, 0.0f, 0.0f,
+		0.579302f, 0.0f, -1.00701f, 0.5f, 0.0f, -0.866026f, 0.0f, 0.0f,
+		-0.408369f, -0.710229f, -0.682775f, -0.191342f, -0.92388f, -0.331414f, 0.0f, 0.0f,
+		-0.582665f, 0.0f, -1.00701f, -0.5f, 0.0f, -0.866025f, 0.0f, 0.0f,
+		-0.582665f, 0.0f, -1.00701f, -0.5f, 0.0f, -0.866025f, 0.0f, 0.0f,
+		-0.801892f, 0.710229f, -0.00117253f, -0.382683f, 0.92388f, 0.0f, 0.0f, 0.0f,
+		-0.408369f, 0.710229f, 0.68043f, -0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
+		-0.408369f, 0.710229f, 0.68043f, -0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
+		0.378678f, 0.710229f, 0.68043f, 0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
+		0.378678f, 0.710229f, 0.68043f, 0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
+		0.772201f, 0.710229f, -0.0011726f, 0.382683f, 0.92388f, -3.35276e-008f, 0.0f, 0.0f,
+		0.772201f, 0.710229f, -0.0011726f, 0.382683f, 0.92388f, -3.35276e-008f, 0.0f, 0.0f,
+		0.378678f, 0.710229f, -0.682775f, 0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
+		0.378678f, 0.710229f, -0.682775f, 0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
+		-0.408369f, 0.710229f, -0.682775f, -0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
+		-0.408369f, 0.710229f, -0.682775f, -0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
+		-0.00168097f, -0.99839f, -0.000717035f, -0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		-0.00168097f, 0.99839f, -0.000717035f, -0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.00168097f, 0.99839f, -0.000717035f, -0.0f, 1.0f, 0.0f, 0.0f, 0.0f
+	};
+
+	const ushort SPHERE_INDICES[] =
+	{
+		0, 1, 2,
+		3, 2, 1,
+		1, 4, 3,
+		5, 3, 4,
+		4, 6, 5,
+		7, 5, 6,
+		6, 8, 7,
+		9, 7, 8,
+		8, 10, 9,
+		11, 9, 10,
+		10, 0, 12,
+		2, 11, 0,
+		2, 3, 13,
+		14, 13, 3,
+		3, 5, 15,
+		16, 14, 5,
+		5, 7, 17,
+		18, 16, 7,
+		7, 9, 19,
+		20, 18, 9,
+		9, 11, 21,
+		22, 20, 11,
+		11, 2, 23,
+		13, 22, 2,
+		24, 1, 0,
+		25, 13, 14,
+		24, 4, 1,
+		26, 14, 16,
+		24, 6, 4,
+		25, 16, 18,
+		24, 8, 6,
+		25, 18, 20,
+		24, 10, 8,
+		25, 20, 22,
+		24, 0, 10,
+		25, 22, 13
+	};
+
+	glGenBuffers(1, &m_SphereVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, m_SphereVertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 27 * 24, SPHERE_VERTICES, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &m_SphereIndices);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_SphereIndices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 36 * 12, SPHERE_INDICES, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	m_VertexBuffers.push_back(m_SphereVertices);
+	m_VertexBuffers.push_back(m_SphereIndices);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -208,14 +303,17 @@ void GlWidget::initializeGL()
 
 	emit Initialized();
 
-	if(m_Scenes.size() > 0 && m_Scenes[0] != NULL)
+	if(m_Scenes.size() > m_ActiveSceneIdx && m_Scenes[m_ActiveSceneIdx] != NULL)
 	{
-		m_Scenes[0]->Initialize();
+		m_Scenes[m_ActiveSceneIdx]->Initialize();
 	}
 }
 
 void GlWidget::resizeGL(int w, int h)
 {
+	m_PrevSceneButton->setGeometry(           0, h - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
+	m_NextSceneButton->setGeometry(BUTTON_WIDTH, h - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
+
 	glViewport(0, 0, w, h);
 
 	m_CameraProjetion.setToIdentity();
@@ -288,6 +386,19 @@ void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector3D& 
 	});
 }
 
+void GlWidget::AddSpere(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling)
+{
+	m_RenderObjects.push_back(RenderObject
+	{
+		m_SphereVertices,
+		m_SphereIndices,
+		36,
+		color,
+		tiling,
+		sceneObject
+	});
+}
+
 void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling)
 {
 }
@@ -295,6 +406,34 @@ void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D 
 void GlWidget::Initialize()
 {
 	showFullScreen();
+}
+
+void GlWidget::ActivatePrevScene()
+{
+	m_Scenes[m_ActiveSceneIdx]->Deinitialize();
+	m_RenderObjects.clear();
+
+	m_ActiveSceneIdx--;
+	if(m_ActiveSceneIdx < 0)
+	{
+		m_ActiveSceneIdx = m_Scenes.size() - 1;
+	}
+
+	m_Scenes[m_ActiveSceneIdx]->Initialize();
+}
+
+void GlWidget::ActivateNextScene()
+{
+	m_Scenes[m_ActiveSceneIdx]->Deinitialize();
+	m_RenderObjects.clear();
+
+	m_ActiveSceneIdx++;
+	if(m_ActiveSceneIdx >= m_Scenes.size())
+	{
+		m_ActiveSceneIdx = 0;
+	}
+
+	m_Scenes[m_ActiveSceneIdx]->Initialize();
 }
 
 GLuint GlWidget::CreateShader(const char *shaderText, GLenum type)
