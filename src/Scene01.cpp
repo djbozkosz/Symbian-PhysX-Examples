@@ -30,11 +30,11 @@ void Scene01::OnInitialize()
 
 	physx::PxRigidDynamic* sphere = physx::PxCreateDynamic(
 		*m_Physics->GetPhysics(),
-		physx::PxTransform(physx::PxVec3(15.0f, 3.0f, 0.0f)),
-		physx::PxSphereGeometry(1.2f),
+		physx::PxTransform(physx::PxVec3(15.0f, 4.0f, 0.0f)),
+		physx::PxSphereGeometry(1.5f),
 		*m_DefaultMaterial,
 		100.0f);
-	sphere->setLinearVelocity(physx::PxVec3(-20.0f, 0.0f, 0.0f));
+	sphere->setLinearVelocity(physx::PxVec3(-15.0f, 0.0f, 0.0f));
 
 	m_Physics->AddSpere(sphere, QVector3D(0.9f, 0.2f, 0.2f), QVector2D(1.0f, 1.0f));
 
