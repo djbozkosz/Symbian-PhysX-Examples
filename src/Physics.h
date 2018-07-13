@@ -2,6 +2,7 @@
 #define PHYSICS_H
 
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include <QLinkedList>
 
@@ -37,6 +38,9 @@ class Physics : public QObject
 
 	Q_OBJECT
 
+	float DELTA_MIN;
+	float DELTA_MAX;
+
 	protected:
 
 	class Actor : public ISceneObjectProvider
@@ -67,6 +71,8 @@ class Physics : public QObject
 	private:
 
 	QTimer               m_Timer;
+	QElapsedTimer        m_Elapsed;
+	float                m_DeltaTime;
 
 	ErrorCallback        m_ErrorCallback;
 	AllocatorCallback    m_AllocatorCallback;

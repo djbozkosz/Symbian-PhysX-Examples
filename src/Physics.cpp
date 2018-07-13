@@ -36,10 +36,13 @@ void AllocatorCallback::deallocate(void* ptr)
 
 Physics::Physics(QObject *parent) :
 	QObject(parent),
+	DELTA_MIN(1.0f / 60.0f),
+	DELTA_MAX(1.0f / 5.0f),
 	m_Foundation(NULL),
 	m_Physics(NULL),
 	m_Cooking(NULL),
-	m_ActiveScene(NULL)
+	m_ActiveScene(NULL),
+	m_DeltaTime(DELTA_MIN)
 {
 }
 
@@ -59,9 +62,10 @@ void Physics::Initialize()
 	m_Cooking    = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, physx::PxCookingParams(m_Physics->getTolerancesScale()));
 	PxInitExtensions(*m_Physics, NULL);
 
-	m_Timer.setInterval(16);
+	m_Timer.setInterval(m_DeltaTime);
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(Simulate()));
 	m_Timer.start();
+	m_Elapsed.start();
 }
 
 void Physics::AddBox(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
@@ -94,10 +98,23 @@ void Physics::CleanActors()
 
 void Physics::Simulate()
 {
-	if(m_ActiveScene != NULL)
+	if(m_ActiveScene == NULL)
+		return;
+
+	uint64_t elapsed = m_Elapsed.elapsed();
+
+	m_ActiveScene->simulate(m_DeltaTime);
+	m_ActiveScene->fetchResults(true);
+
+	m_DeltaTime = (m_Elapsed.elapsed() - elapsed) * 0.001f;
+
+	if(m_DeltaTime < DELTA_MIN)
 	{
-		m_ActiveScene->simulate(1.0f / 60.0f);
-		m_ActiveScene->fetchResults(true);
+		m_DeltaTime = DELTA_MIN;
+	}
+	else if(m_DeltaTime > DELTA_MAX)
+	{
+		m_DeltaTime = DELTA_MAX;
 	}
 
 	emit Simulated();
