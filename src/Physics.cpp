@@ -68,19 +68,19 @@ void Physics::Initialize()
 	m_Elapsed.start();
 }
 
-void Physics::AddBox(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
+void Physics::AddBox(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
 	emit ActorBoxAdded(&m_Actors.back(), color, tiling);
 }
 
-void Physics::AddSpere(physx::PxRigidActor *actor, const QVector3D &color, const QVector2D &tiling)
+void Physics::AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling)
 {
 	AddActor(actor);
 	emit ActorSphereAdded(&m_Actors.back(), color, tiling);
 }
 
-void Physics::AddMesh(physx::PxRigidActor* actor, const QVector3D& color, const QVector2D& tiling)
+void Physics::AddMesh(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
 	emit ActorMeshAdded(&m_Actors.back(), color, tiling);

@@ -55,69 +55,8 @@ void GlWidget::AddScene(ISceneProvider *scene)
 
 void GlWidget::initializeGL()
 {
-	const char *VERTEX_SHADER =
-	{
-		"attribute vec3 _position;\n"
-		"attribute vec3 _normal;\n"
-		"attribute vec2 _textureCoord;\n"
-		"\n"
-		"uniform mat4 mvp;\n"
-		"uniform mat4 mw;\n"
-		"uniform mat3 mnit;\n"
-		"\n"
-		"varying vec3 positionWorld;\n"
-		"varying vec3 normalDir;\n"
-		"varying vec2 texCoord;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-		"	positionWorld = vec4(mw * vec4(_position, 1.0)).xyz;\n"
-		"	normalDir     = normalize(mnit * normalize(_normal));\n"
-		"	texCoord      = _textureCoord;\n"
-		"	gl_Position   = mvp * vec4(_position, 1.0);\n"
-		"}\n"
-	};
-
-	const char *FRAGMENT_SHADER =
-	{
-		"varying vec3 positionWorld;\n"
-		"varying vec3 normalDir;\n"
-		"varying vec2 texCoord;\n"
-		"\n"
-		"uniform sampler2D diffTex;\n"
-		"\n"
-		"uniform vec3 cam;\n"
-		"uniform vec3 color;\n"
-		"uniform vec2 tiling;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-		"	vec3  ambColor       = vec3(0.3, 0.4, 0.5);\n"
-		"	vec3  lightPos       = vec3(-7.0, 10.0, -10.0);\n"
-		"	vec2  lightRange     = vec2(1.0, 50.0);\n"
-		"	vec3  lightColor     = vec3(1.5, 1.2, 1.0);\n"
-		"	vec4  lightSpecColor = vec4(1.0, 1.0, 1.0, 16.0);\n"
-		"\n"
-		"	vec3  diffuse        = texture2D(diffTex, texCoord * tiling).rgb;\n"
-		"	float diffuseGray    = diffuse.r * 0.3 + diffuse.g * 0.59 + diffuse.b * 0.11;\n"
-		"\n"
-		"	vec3  viewDir        = normalize(cam - positionWorld);\n"
-		"	vec3  lightDir       = lightPos - positionWorld;\n"
-		"\n"
-		"	float lightDist      = clamp((length(lightDir) - lightRange.x) / (lightRange.y - lightRange.x) * -1.0 + 1.0, 0.0, 1.0);\n"
-		"	lightDir             = normalize(lightDir);\n"
-		"	float lightDot       = max(0.0, dot(normalDir, lightDir));\n"
-		"	float lightSpecDot   = max(0.0, dot(normalDir, normalize(lightDir + viewDir)));\n"
-		"\n"
-		"	vec3  colorDiff      = lightColor * lightDot * lightDist + ambColor;\n"
-		"	vec3  colorSpec      = lightSpecColor.rgb * pow(lightSpecDot, lightSpecColor.a) * lightDist;\n"
-		"\n"
-		"	gl_FragColor         = vec4(diffuse * color * colorDiff + diffuseGray * colorSpec, 1.0);\n"
-		"}\n"
-	};
-
-	m_VertexShader   = CreateShader(VERTEX_SHADER, GL_VERTEX_SHADER);
-	m_FragmentShader = CreateShader(FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
+	m_VertexShader   = CreateShader(GlConstants::VERTEX_SHADER, GL_VERTEX_SHADER);
+	m_FragmentShader = CreateShader(GlConstants::FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
 	m_ShaderProgram  = CreateProgram(m_VertexShader, m_FragmentShader);
 
 	m_AttributePosition     = glGetAttribLocation(m_ShaderProgram, "_position");
@@ -133,146 +72,10 @@ void GlWidget::initializeGL()
 	m_UniformColor          = glGetUniformLocation(m_ShaderProgram, "color");
 	m_UniformTiling         = glGetUniformLocation(m_ShaderProgram, "tiling");
 
-	const float CUBE_VERTICES[] =
-	{
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f
-	};
-
-	const ushort CUBE_INDICES[] =
-	{
-		 0,  2,  1,
-		 1,  2,  3,
-		 4,  6,  5,
-		 5,  6,  7,
-		 8, 10,  9,
-		 9, 10, 11,
-		12, 14, 13,
-		13, 14, 15,
-		16, 18, 17,
-		17, 18, 19,
-		20, 22, 21,
-		21, 22, 23
-	};
-
-	glGenBuffers(1, &m_CubeVertices);
-	glBindBuffer(GL_ARRAY_BUFFER, m_CubeVertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8 * 24, CUBE_VERTICES, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_CubeIndices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_CubeIndices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 3 * 12, CUBE_INDICES, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	m_VertexBuffers.push_back(m_CubeVertices);
-	m_VertexBuffers.push_back(m_CubeIndices);
-
-	const float SPHERE_VERTICES[] =
-	{
-		-0.801892f, -0.710229f, -0.00117253f, -0.382683f, -0.92388f, 0.0f, 0.0f, 0.0f,
-		-0.408369f, -0.710229f, 0.68043f, -0.191342f, -0.92388f, 0.331414f, 0.0f, 0.0f,
-		-1.16365f, 0.0f, -0.000717035f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		-0.582664f, 0.0f, 1.00558f, -0.5f, 0.0f, 0.866025f, 0.0f, 0.0f,
-		0.378678f, -0.710229f, 0.68043f, 0.191342f, -0.92388f, 0.331414f, 0.0f, 0.0f,
-		0.579302f, 0.0f, 1.00558f, 0.5f, 0.0f, 0.866025f, 0.0f, 0.0f,
-		0.772201f, -0.710229f, -0.0011726f, 0.382683f, -0.92388f, -3.35276e-008f, 0.0f, 0.0f,
-		1.16029f, 0.0f, -0.000717136f, 1.0f, 0.0f, -8.75443e-008f, 0.0f, 0.0f,
-		0.378678f, -0.710229f, -0.682775f, 0.191342f, -0.92388f, -0.331414f, 0.0f, 0.0f,
-		0.579302f, 0.0f, -1.00701f, 0.5f, 0.0f, -0.866026f, 0.0f, 0.0f,
-		-0.408369f, -0.710229f, -0.682775f, -0.191342f, -0.92388f, -0.331414f, 0.0f, 0.0f,
-		-0.582665f, 0.0f, -1.00701f, -0.5f, 0.0f, -0.866025f, 0.0f, 0.0f,
-		-0.582665f, 0.0f, -1.00701f, -0.5f, 0.0f, -0.866025f, 0.0f, 0.0f,
-		-0.801892f, 0.710229f, -0.00117253f, -0.382683f, 0.92388f, 0.0f, 0.0f, 0.0f,
-		-0.408369f, 0.710229f, 0.68043f, -0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
-		-0.408369f, 0.710229f, 0.68043f, -0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
-		0.378678f, 0.710229f, 0.68043f, 0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
-		0.378678f, 0.710229f, 0.68043f, 0.191342f, 0.92388f, 0.331414f, 0.0f, 0.0f,
-		0.772201f, 0.710229f, -0.0011726f, 0.382683f, 0.92388f, -3.35276e-008f, 0.0f, 0.0f,
-		0.772201f, 0.710229f, -0.0011726f, 0.382683f, 0.92388f, -3.35276e-008f, 0.0f, 0.0f,
-		0.378678f, 0.710229f, -0.682775f, 0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
-		0.378678f, 0.710229f, -0.682775f, 0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
-		-0.408369f, 0.710229f, -0.682775f, -0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
-		-0.408369f, 0.710229f, -0.682775f, -0.191342f, 0.92388f, -0.331414f, 0.0f, 0.0f,
-		-0.00168097f, -0.99839f, -0.000717035f, -0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-		-0.00168097f, 0.99839f, -0.000717035f, -0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-		-0.00168097f, 0.99839f, -0.000717035f, -0.0f, 1.0f, 0.0f, 0.0f, 0.0f
-	};
-
-	const ushort SPHERE_INDICES[] =
-	{
-		0, 1, 2,
-		3, 2, 1,
-		1, 4, 3,
-		5, 3, 4,
-		4, 6, 5,
-		7, 5, 6,
-		6, 8, 7,
-		9, 7, 8,
-		8, 10, 9,
-		11, 9, 10,
-		10, 0, 12,
-		2, 11, 0,
-		2, 3, 13,
-		14, 13, 3,
-		3, 5, 15,
-		16, 14, 5,
-		5, 7, 17,
-		18, 16, 7,
-		7, 9, 19,
-		20, 18, 9,
-		9, 11, 21,
-		22, 20, 11,
-		11, 2, 23,
-		13, 22, 2,
-		24, 1, 0,
-		25, 13, 14,
-		24, 4, 1,
-		26, 14, 16,
-		24, 6, 4,
-		25, 16, 18,
-		24, 8, 6,
-		25, 18, 20,
-		24, 10, 8,
-		25, 20, 22,
-		24, 0, 10,
-		25, 22, 13
-	};
-
-	glGenBuffers(1, &m_SphereVertices);
-	glBindBuffer(GL_ARRAY_BUFFER, m_SphereVertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 27 * 24, SPHERE_VERTICES, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_SphereIndices);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_SphereIndices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 36 * 12, SPHERE_INDICES, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	m_VertexBuffers.push_back(m_SphereVertices);
-	m_VertexBuffers.push_back(m_SphereIndices);
+	CreateVertices(&m_CubeVertices,   GlConstants::CUBE_VERTICES_COUNT,   GlConstants::CUBE_VERTICES);
+	CreateIndices (&m_CubeIndices,    GlConstants::CUBE_INDICES_COUNT,    GlConstants::CUBE_INDICES);
+	CreateVertices(&m_SphereVertices, GlConstants::SPHERE_VERTICES_COUNT, GlConstants::SPHERE_VERTICES);
+	CreateIndices (&m_SphereIndices,  GlConstants::SPHERE_INDICES_COUNT,  GlConstants::SPHERE_INDICES);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -354,7 +157,7 @@ void GlWidget::paintGL()
 		glUniformMatrix3fv(m_UniformMNIT, 1, GL_FALSE, Matrix3x3ToFloat(modelWorldNormalInversedTransposed).data());
 
 		glUniform3f(m_UniformCamera, m_CameraPosition.x(), m_CameraPosition.y(), m_CameraPosition.z());
-		glUniform3f(m_UniformColor, object->Color.x(), object->Color.y(), object->Color.z());
+		glUniform4f(m_UniformColor, object->Color.x(), object->Color.y(), object->Color.z(), object->Color.w());
 		glUniform2f(m_UniformTiling, object->Tiling.x(), object->Tiling.y());
 
 		glDrawElements(GL_TRIANGLES, object->Faces * 3, GL_UNSIGNED_SHORT, NULL);
@@ -373,33 +176,33 @@ void GlWidget::paintGL()
 	glUseProgram(0);
 }
 
-void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector3D& color, const QVector2D& tiling)
+void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector4D& color, const QVector2D& tiling)
 {
 	m_RenderObjects.push_back(RenderObject
 	{
 		m_CubeVertices,
 		m_CubeIndices,
-		12,
+		GlConstants::CUBE_INDICES_COUNT,
 		color,
 		tiling,
 		sceneObject
 	});
 }
 
-void GlWidget::AddSpere(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling)
+void GlWidget::AddSpere(const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling)
 {
 	m_RenderObjects.push_back(RenderObject
 	{
 		m_SphereVertices,
 		m_SphereIndices,
-		36,
+		GlConstants::SPHERE_INDICES_COUNT,
 		color,
 		tiling,
 		sceneObject
 	});
 }
 
-void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling)
+void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling)
 {
 }
 
@@ -490,4 +293,24 @@ GLuint GlWidget::CreateProgram(GLuint vertexShader, GLuint fragmentShader)
 	}
 
 	return program;
+}
+
+void GlWidget::CreateVertexBuffer(GLuint *vertexBuffer, GLenum type, uint size, const void* data)
+{
+	glGenBuffers(1, vertexBuffer);
+	glBindBuffer(type, *vertexBuffer);
+	glBufferData(type, size, data, GL_STATIC_DRAW);
+	glBindBuffer(type, 0);
+
+	m_VertexBuffers.push_back(*vertexBuffer);
+}
+
+void GlWidget::CreateVertices(GLuint *vertexBuffer, uint count, const void* data)
+{
+	CreateVertexBuffer(vertexBuffer, GL_ARRAY_BUFFER, sizeof(float) * 8 * count, data);
+}
+
+void GlWidget::CreateIndices(GLuint *vertexBuffer, uint count, const void* data)
+{
+	CreateVertexBuffer(vertexBuffer, GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 3 * count, data);
 }

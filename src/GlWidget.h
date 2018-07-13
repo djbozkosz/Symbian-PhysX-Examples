@@ -24,6 +24,8 @@
 #include "ISceneProvider.h"
 #include "ISceneObjectProvider.h"
 
+#include "GlConstants.h"
+
 class GlWidget : public QGLWidget
 {
 	private:
@@ -42,7 +44,7 @@ class GlWidget : public QGLWidget
 		GLuint                      Vertices;
 		GLuint                      Indices;
 		uint                        Faces;
-		QVector3D                   Color;
+		QVector4D                   Color;
 		QVector2D                   Tiling;
 
 		const ISceneObjectProvider* SceneObject;
@@ -106,9 +108,9 @@ class GlWidget : public QGLWidget
 
 	public slots:
 
-	void AddBox  (const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling);
-	void AddSpere(const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D &tiling);
-	void AddMesh (const ISceneObjectProvider* sceneObject, const QVector3D &color, const QVector2D& tiling);
+	void AddBox  (const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling);
+	void AddSpere(const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling);
+	void AddMesh (const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D& tiling);
 
 	private slots:
 
@@ -125,6 +127,10 @@ class GlWidget : public QGLWidget
 
 	static GLuint CreateShader(const char* shaderText, GLenum type);
 	static GLuint CreateProgram(GLuint vertexShader, GLuint fragmentShader);
+
+	void CreateVertexBuffer(GLuint *vertexBuffer, GLenum type, uint size, const void* data);
+	void CreateVertices(GLuint *vertexBuffer, uint count, const void* data);
+	void CreateIndices(GLuint *vertexBuffer, uint count, const void* data);
 
 	static QMatrix4x4 ComposeTransformation(const QVector3D &position, const QQuaternion &rotation = QQuaternion(), const QVector3D &scale = QVector3D(1.0f, 1.0f, 1.0f));
 	static QVector<float> Matrix4x4ToFloat(const QMatrix4x4 &mat);

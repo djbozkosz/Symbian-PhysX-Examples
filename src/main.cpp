@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
 	Scene01  sample01(&physics);
 
 	QObject::connect(&physics, SIGNAL(Simulated()), &glWidget, SLOT(update()));
-	QObject::connect(&physics, SIGNAL(ActorBoxAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddBox(const ISceneObjectProvider*, QVector3D, QVector2D)));
-	QObject::connect(&physics, SIGNAL(ActorSphereAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddSpere(const ISceneObjectProvider*, QVector3D, QVector2D)));
-	QObject::connect(&physics, SIGNAL(ActorMeshAdded(const ISceneObjectProvider*, QVector3D, QVector2D)), &glWidget, SLOT(AddMesh(const ISceneObjectProvider*, QVector3D, QVector2D)));
+	QObject::connect(&physics, SIGNAL(ActorBoxAdded(const ISceneObjectProvider*, QVector4D, QVector2D)), &glWidget, SLOT(AddBox(const ISceneObjectProvider*, QVector4D, QVector2D)));
+	QObject::connect(&physics, SIGNAL(ActorSphereAdded(const ISceneObjectProvider*, QVector4D, QVector2D)), &glWidget, SLOT(AddSpere(const ISceneObjectProvider*, QVector4D, QVector2D)));
+	QObject::connect(&physics, SIGNAL(ActorMeshAdded(const ISceneObjectProvider*, QVector4D, QVector2D)), &glWidget, SLOT(AddMesh(const ISceneObjectProvider*, QVector4D, QVector2D)));
 
 	QObject::connect(&glWidget, SIGNAL(Initialized()), &physics, SLOT(Initialize()));
 

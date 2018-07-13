@@ -17,7 +17,7 @@ void Scene01::OnInitialize()
 		physx::PxBoxGeometry(50.0f, 0.5f, 50.0f),
 		*m_DefaultMaterial);
 
-	m_Physics->AddBox(plane, QVector3D(0.2f, 0.3f, 0.4f), QVector2D(100.0f, 100.0f));
+	m_Physics->AddBox(plane, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
 	SetupWall(QVector3D(5.0f, 0.0f, 0.0f));
 	SetupWall(QVector3D(-2.0f, 0.0f, 0.0f));
@@ -36,7 +36,7 @@ void Scene01::OnInitialize()
 		100.0f);
 	sphere->setLinearVelocity(physx::PxVec3(-15.0f, 0.0f, 0.0f));
 
-	m_Physics->AddSpere(sphere, QVector3D(0.9f, 0.2f, 0.2f), QVector2D(1.0f, 1.0f));
+	m_Physics->AddSpere(sphere, QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
 
 	/*physx::PxSphericalJoint* joint = physx::PxSphericalJointCreate(*m_Physics->GetPhysics(),
 		hang,   physx::PxTransform(physx::PxVec3(0.0f, 0.0f, 0.0f)),
@@ -61,7 +61,7 @@ void Scene01::SetupWall(QVector3D position)
 				10.0f);
 			box->putToSleep();
 
-			m_Physics->AddBox(box, QVector3D(1.0f, 0.8f, 0.6f), QVector2D(1.0f, 1.0f));
+			m_Physics->AddBox(box, QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
 		}
 	}
 }

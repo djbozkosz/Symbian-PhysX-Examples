@@ -11,6 +11,7 @@ TEMPLATE = app
 SOURCES += \
 	src/main.cpp \
 	src/Splash.cpp \
+	src/GlConstants.cpp \
 	src/GlWidget.cpp \
 	src/Physics.cpp \
 	src/SceneBase.cpp \
@@ -21,6 +22,7 @@ HEADERS += \
 	src/ISceneProvider.h \
 	src/ISceneObjectProvider.h \
 	src/Splash.h \
+	src/GlConstants.h \
 	src/GlWidget.h \
 	src/Physics.h \
 	src/SceneBase.h \

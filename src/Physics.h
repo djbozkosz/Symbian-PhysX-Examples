@@ -85,9 +85,9 @@ class Physics : public QObject
 	inline physx::PxPhysics* GetPhysics() const { return m_Physics; }
 	inline void SetActiveScene(physx::PxScene* scene) { m_ActiveScene = scene; }
 
-	void AddBox  (physx::PxRigidActor *actor, const QVector3D &color, const QVector2D &tiling);
-	void AddSpere(physx::PxRigidActor *actor, const QVector3D &color, const QVector2D &tiling);
-	void AddMesh (physx::PxRigidActor *actor, const QVector3D &color, const QVector2D &tiling);
+	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
+	void AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
+	void AddMesh (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
 
 	void CleanActors();
 
@@ -99,9 +99,9 @@ class Physics : public QObject
 
 	void Simulated();
 
-	void ActorBoxAdded   (const ISceneObjectProvider* actor, const QVector3D& color, const QVector2D& tiling);
-	void ActorSphereAdded(const ISceneObjectProvider* actor, const QVector3D& color, const QVector2D& tiling);
-	void ActorMeshAdded  (const ISceneObjectProvider* actor, const QVector3D& color, const QVector2D& tiling);
+	void ActorBoxAdded   (const ISceneObjectProvider* actor, const QVector4D& color, const QVector2D& tiling);
+	void ActorSphereAdded(const ISceneObjectProvider* actor, const QVector4D& color, const QVector2D& tiling);
+	void ActorMeshAdded  (const ISceneObjectProvider* actor, const QVector4D& color, const QVector2D& tiling);
 
 	private slots:
 
