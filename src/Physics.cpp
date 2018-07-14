@@ -144,6 +144,13 @@ QMatrix4x4 Physics::Actor::GetTransform() const
 
 			transform.scale(box.halfExtents.x * 2.0f, box.halfExtents.y * 2.0f, box.halfExtents.z * 2.0f);
 		}
+		else if(shapes[0]->getGeometryType() == physx::PxGeometryType::eSPHERE)
+		{
+			physx::PxSphereGeometry sphere;
+			shapes[0]->getSphereGeometry(sphere);
+
+			transform.scale(sphere.radius);
+		}
 	}
 
 	return transform;
