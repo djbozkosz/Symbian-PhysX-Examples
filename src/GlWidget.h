@@ -68,22 +68,30 @@ class GlWidget : public QGLWidget
 	QMatrix4x4               m_CameraProjetion;
 	QMatrix4x4               m_CameraViewProjetion;
 
-	GLuint                   m_VertexShader;
-	GLuint                   m_FragmentShader;
-	GLuint                   m_ShaderProgram;
+	GLuint                   m_IlluminationVertexShader;
+	GLuint                   m_IlluminationFragmentShader;
+	GLuint                   m_IlluminationShaderProgram;
 
-	GLint                    m_AttributePosition;
-	GLint                    m_AttributeNormal;
-	GLint                    m_AttributeTextureCoord;
+	GLint                    m_IlluminationAttributePosition;
+	GLint                    m_IlluminationAttributeNormal;
+	GLint                    m_IlluminationAttributeTextureCoord;
 
-	GLint                    m_UniformMVP;
-	GLint                    m_UniformMW;
-	GLint                    m_UniformMNIT;
+	GLint                    m_IlluminationUniformMVP;
+	GLint                    m_IlluminationUniformMW;
+	GLint                    m_IlluminationUniformMNIT;
 
-	GLint                    m_UniformDiffuseTexture;
-	GLint                    m_UniformCamera;
-	GLint                    m_UniformColor;
-	GLint                    m_UniformTiling;
+	GLint                    m_IlluminationUniformDiffuseTexture;
+	GLint                    m_IlluminationUniformCamera;
+	GLint                    m_IlluminationUniformColor;
+	GLint                    m_IlluminationUniformTiling;
+
+	GLuint                   m_DepthVertexShader;
+	GLuint                   m_DepthFragmentShader;
+	GLuint                   m_DepthShaderProgram;
+
+	GLint                    m_DepthAttributePosition;
+
+	GLint                    m_DepthUniformMVP;
 
 	GLuint                   m_CubeVertices;
 	GLuint                   m_CubeIndices;
@@ -92,6 +100,10 @@ class GlWidget : public QGLWidget
 	GLuint                   m_SphereIndices;
 
 	GLuint                   m_GridTexture;
+
+	GLuint                   m_ShadowFramebuffer;
+	GLuint                   m_ShadowTexture;
+	GLuint                   m_ShadowDepth;
 
 	public:
 

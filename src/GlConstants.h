@@ -7,8 +7,11 @@ class GlConstants
 {
 	public:
 
-	static const char* VERTEX_SHADER;
-	static const char* FRAGMENT_SHADER;
+	static const char* ILLUMINATION_VERTEX_SHADER;
+	static const char* ILLUMINATION_FRAGMENT_SHADER;
+
+	static const char* DEPTH_VERTEX_SHADER;
+	static const char* DEPTH_FRAGMENT_SHADER;
 
 	static const uint   CUBE_VERTICES_COUNT = 24;
 	static const uint   CUBE_INDICES_COUNT  = 12;

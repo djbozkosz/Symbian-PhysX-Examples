@@ -1,6 +1,6 @@
 #include "GlConstants.h"
 
-const char* GlConstants::VERTEX_SHADER =
+const char* GlConstants::ILLUMINATION_VERTEX_SHADER =
 {
 	"attribute vec3 _position;\n"
 	"attribute vec3 _normal;\n"
@@ -23,7 +23,7 @@ const char* GlConstants::VERTEX_SHADER =
 	"}\n"
 };
 
-const char* GlConstants::FRAGMENT_SHADER =
+const char* GlConstants::ILLUMINATION_FRAGMENT_SHADER =
 {
 	"varying vec3 positionWorld;\n"
 	"varying vec3 normalDir;\n"
@@ -58,6 +58,26 @@ const char* GlConstants::FRAGMENT_SHADER =
 	"	vec3  colorSpec      = lightSpecColor * color.a * pow(lightSpecDot, color.a) * lightDist;\n"
 	"\n"
 	"	gl_FragColor         = vec4(diffuse * color.rgb * colorDiff + diffuseGray * colorSpec, 1.0);\n"
+	"}\n"
+};
+
+const char* GlConstants::DEPTH_VERTEX_SHADER =
+{
+	"attribute vec3 _position;\n"
+	"\n"
+	"uniform mat4 mvp;\n"
+	"\n"
+	"void main()\n"
+	"{\n"
+	"	gl_Position = mvp * vec4(_position, 1.0);\n"
+	"}\n"
+};
+
+const char* GlConstants::DEPTH_FRAGMENT_SHADER =
+{
+	"void main()\n"
+	"{\n"
+	"	gl_FragColor = vec4(gl_FragCoord.z, gl_FragCoord.z, gl_FragCoord.z, 1.0);\n"
 	"}\n"
 };
 
