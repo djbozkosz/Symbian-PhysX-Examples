@@ -212,6 +212,9 @@ void GlWidget::paintGL()
 
 	glUseProgram(m_DepthShaderProgram);
 
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1.0f, 1.0f);
+
 	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
 		RenderObject* object = &m_RenderObjects[idx];
@@ -234,6 +237,9 @@ void GlWidget::paintGL()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
+	glPolygonOffset(0.0f, 0.0f);
+	glDisable(GL_POLYGON_OFFSET_FILL);
 
 	glViewport(0, 0, m_Width, m_Height);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
