@@ -32,8 +32,11 @@ class GlWidget : public QGLWidget
 
 	Q_OBJECT
 
-	static const uint BUTTON_WIDTH  = 50;
-	static const uint BUTTON_HEIGHT = 50;
+	static const uint BUTTON_WIDTH          = 50;
+	static const uint BUTTON_HEIGHT         = 50;
+
+	static const uint SHADOW_TEXTURE_WIDTH  = 1024;
+	static const uint SHADOW_TEXTURE_HEIGHT = 1024;
 
 	protected:
 
@@ -47,10 +50,15 @@ class GlWidget : public QGLWidget
 		QVector4D                   Color;
 		QVector2D                   Tiling;
 
+		QMatrix4x4                  ModelWorld;
+
 		const ISceneObjectProvider* SceneObject;
 	};
 
 	private:
+
+	int                      m_Width;
+	int                      m_Height;
 
 	QSplashScreen*           m_Splash;
 
@@ -66,7 +74,9 @@ class GlWidget : public QGLWidget
 	QVector3D                m_CameraPosition;
 	QMatrix4x4               m_CameraView;
 	QMatrix4x4               m_CameraProjetion;
-	QMatrix4x4               m_CameraViewProjetion;
+
+	QMatrix4x4               m_CameraShadowViewProjetion;
+	QMatrix4x4               m_CameraShadowViewProjetionBias;
 
 	GLuint                   m_IlluminationVertexShader;
 	GLuint                   m_IlluminationFragmentShader;
@@ -79,8 +89,10 @@ class GlWidget : public QGLWidget
 	GLint                    m_IlluminationUniformMVP;
 	GLint                    m_IlluminationUniformMW;
 	GLint                    m_IlluminationUniformMNIT;
+	GLint                    m_IlluminationUniformMVPShadow;
 
 	GLint                    m_IlluminationUniformDiffuseTexture;
+	GLint                    m_IlluminationUniformShadowTexture;
 	GLint                    m_IlluminationUniformCamera;
 	GLint                    m_IlluminationUniformColor;
 	GLint                    m_IlluminationUniformTiling;

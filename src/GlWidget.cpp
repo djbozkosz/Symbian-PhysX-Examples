@@ -2,6 +2,8 @@
 
 GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
 	QGLWidget(parent),
+	m_Width(1),
+	m_Height(1),
 	m_Splash(splash),
 	m_PrevSceneButton(new QPushButton("«", this)),
 	m_NextSceneButton(new QPushButton("»", this)),
@@ -16,7 +18,9 @@ GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
 	m_IlluminationUniformMVP(-1),
 	m_IlluminationUniformMW(-1),
 	m_IlluminationUniformMNIT(-1),
+	m_IlluminationUniformMVPShadow(-1),
 	m_IlluminationUniformDiffuseTexture(-1),
+	m_IlluminationUniformShadowTexture(-1),
 	m_IlluminationUniformCamera(-1),
 	m_IlluminationUniformColor(-1),
 	m_IlluminationUniformTiling(-1),
@@ -81,8 +85,10 @@ void GlWidget::initializeGL()
 	m_IlluminationUniformMVP            = glGetUniformLocation(m_IlluminationShaderProgram, "mvp");
 	m_IlluminationUniformMW             = glGetUniformLocation(m_IlluminationShaderProgram, "mw");
 	m_IlluminationUniformMNIT           = glGetUniformLocation(m_IlluminationShaderProgram, "mnit");
+	m_IlluminationUniformMVPShadow      = glGetUniformLocation(m_IlluminationShaderProgram, "mvpShadow");
 
 	m_IlluminationUniformDiffuseTexture = glGetUniformLocation(m_IlluminationShaderProgram, "diffTex");
+	m_IlluminationUniformShadowTexture  = glGetUniformLocation(m_IlluminationShaderProgram, "shadTex");
 	m_IlluminationUniformCamera         = glGetUniformLocation(m_IlluminationShaderProgram, "cam");
 	m_IlluminationUniformColor          = glGetUniformLocation(m_IlluminationShaderProgram, "color");
 	m_IlluminationUniformTiling         = glGetUniformLocation(m_IlluminationShaderProgram, "tiling");
@@ -107,7 +113,26 @@ void GlWidget::initializeGL()
 	m_CameraView.rotate(40.0f, 1.0f, 0.0f, 0.0f);
 	m_CameraView.rotate(10.0f, 0.0f, 1.0f, 0.0f);
 	m_CameraView.translate(-m_CameraPosition);
-	//m_CameraView.lookAt(QVector3D(-7.0f, 10.0f, -10.0f), QVector3D(), QVector3D(0.0f, 1.0f, 0.0f));
+
+	QMatrix4x4 shadowProjection;
+	QMatrix4x4 shadowView;
+	QMatrix4x4 shadowBias
+	(
+		0.5f, 0.0f, 0.0f, 0.5f,
+		0.0f, 0.5f, 0.0f, 0.5f,
+		0.0f, 0.0f, 0.5f, 0.5f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+
+	shadowProjection.perspective(160.0f, 1.0f, 1.0f, 11.0f);
+	//shadowProjection.ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 50.0f);
+	shadowView.lookAt(QVector3D(-7.0f, 10.0f, -10.0f), QVector3D(-7.0f, 0.0f, -10.0f), QVector3D(0.0f, 0.0f, -1.0f));
+
+	m_CameraShadowViewProjetion.setToIdentity();
+	m_CameraShadowViewProjetionBias.setToIdentity();
+
+	m_CameraShadowViewProjetion     = shadowProjection * shadowView;
+	m_CameraShadowViewProjetionBias = shadowBias * m_CameraShadowViewProjetion;
 
 	glGenTextures(1, &m_GridTexture);
 	glBindTexture(GL_TEXTURE_2D, m_GridTexture);
@@ -123,7 +148,7 @@ void GlWidget::initializeGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	/*glGenFramebuffers(1, &m_ShadowFramebuffer);
+	glGenFramebuffers(1, &m_ShadowFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ShadowFramebuffer);
 
 	glGenTextures(1, &m_ShadowTexture);
@@ -132,15 +157,13 @@ void GlWidget::initializeGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ShadowTexture, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenRenderbuffers(1, &m_ShadowDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_ShadowDepth);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 256, 256);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_ShadowDepth);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if(fboStatus != GL_FRAMEBUFFER_COMPLETE)
@@ -148,7 +171,9 @@ void GlWidget::initializeGL()
 		qDebug() << "Framebuffer creation error:" << fboStatus;
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	if(m_Splash != NULL)
 	{
@@ -168,15 +193,51 @@ void GlWidget::resizeGL(int w, int h)
 	m_PrevSceneButton->setGeometry(           0, h - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 	m_NextSceneButton->setGeometry(BUTTON_WIDTH, h - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 
-	glViewport(0, 0, w, h);
+	m_Width  = w;
+	m_Height = h;
+
+	glViewport(0, 0, m_Width, m_Height);
 
 	m_CameraProjetion.setToIdentity();
 	m_CameraProjetion.perspective(60.0f, (float)w / (float)h, 0.1f, 100.0f);
-	//m_CameraProjetion.perspective(90.0f, 1.0f, 1.0f, 100.0f);
 }
 
 void GlWidget::paintGL()
 {
+	glViewport(0, 0, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_ShadowFramebuffer);
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(m_DepthShaderProgram);
+
+	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
+	{
+		RenderObject* object = &m_RenderObjects[idx];
+
+		glBindBuffer(GL_ARRAY_BUFFER, object->Vertices);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->Indices);
+
+		glEnableVertexAttribArray(m_DepthAttributePosition);
+		glVertexAttribPointer(m_DepthAttributePosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 0));
+
+		object->ModelWorld = object->SceneObject->GetTransform();
+		QMatrix4x4 modelViewProjection = m_CameraShadowViewProjetion * object->ModelWorld;
+
+		glUniformMatrix4fv(m_DepthUniformMVP, 1, GL_FALSE, Matrix4x4ToFloat(modelViewProjection).data());
+
+		glDrawElements(GL_TRIANGLES, object->Faces * 3, GL_UNSIGNED_SHORT, NULL);
+
+		glDisableVertexAttribArray(m_DepthAttributePosition);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	glViewport(0, 0, m_Width, m_Height);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -185,6 +246,12 @@ void GlWidget::paintGL()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_GridTexture);
 	glUniform1i(m_IlluminationUniformDiffuseTexture, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_ShadowTexture);
+	glUniform1i(m_IlluminationUniformShadowTexture, 1);
+
+	QMatrix4x4 cameraViewProjetion = m_CameraProjetion * m_CameraView;
 
 	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
@@ -200,13 +267,14 @@ void GlWidget::paintGL()
 		glVertexAttribPointer(m_IlluminationAttributeNormal,       3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 3));
 		glVertexAttribPointer(m_IlluminationAttributeTextureCoord, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 6));
 
-		QMatrix4x4 modelWorld          = object->SceneObject->GetTransform();
-		QMatrix4x4 modelViewProjection = m_CameraProjetion * m_CameraView * modelWorld;
-		QMatrix3x3 modelWorldNormalInversedTransposed = modelWorld.inverted().transposed().normalMatrix();
+		QMatrix4x4 modelViewProjection                = cameraViewProjetion * object->ModelWorld;
+		QMatrix3x3 modelWorldNormalInversedTransposed = object->ModelWorld.inverted().transposed().normalMatrix();
+		QMatrix4x4 modelViewProjectionShadow          = m_CameraShadowViewProjetionBias * object->ModelWorld;
 
-		glUniformMatrix4fv(m_IlluminationUniformMVP,  1, GL_FALSE, Matrix4x4ToFloat(modelViewProjection).data());
-		glUniformMatrix4fv(m_IlluminationUniformMW,   1, GL_FALSE, Matrix4x4ToFloat(modelWorld).data());
-		glUniformMatrix3fv(m_IlluminationUniformMNIT, 1, GL_FALSE, Matrix3x3ToFloat(modelWorldNormalInversedTransposed).data());
+		glUniformMatrix4fv(m_IlluminationUniformMVP,       1, GL_FALSE, Matrix4x4ToFloat(modelViewProjection).data());
+		glUniformMatrix4fv(m_IlluminationUniformMW,        1, GL_FALSE, Matrix4x4ToFloat(object->ModelWorld).data());
+		glUniformMatrix3fv(m_IlluminationUniformMNIT,      1, GL_FALSE, Matrix3x3ToFloat(modelWorldNormalInversedTransposed).data());
+		glUniformMatrix4fv(m_IlluminationUniformMVPShadow, 1, GL_FALSE, Matrix4x4ToFloat(modelViewProjectionShadow).data());
 
 		glUniform3f(m_IlluminationUniformCamera, m_CameraPosition.x(), m_CameraPosition.y(), m_CameraPosition.z());
 		glUniform4f(m_IlluminationUniformColor, object->Color.x(), object->Color.y(), object->Color.z(), object->Color.w());
@@ -225,6 +293,9 @@ void GlWidget::paintGL()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	glUseProgram(0);
 }
 
@@ -237,6 +308,7 @@ void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector4D& 
 		GlConstants::CUBE_INDICES_COUNT,
 		color,
 		tiling,
+		QMatrix4x4(),
 		sceneObject
 	});
 }
@@ -250,6 +322,7 @@ void GlWidget::AddSpere(const ISceneObjectProvider* sceneObject, const QVector4D
 		GlConstants::SPHERE_INDICES_COUNT,
 		color,
 		tiling,
+		QMatrix4x4(),
 		sceneObject
 	});
 }
