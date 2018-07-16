@@ -4,7 +4,7 @@ GlWidget::GlWidget(/*QSplashScreen *splash, uint splashDelayMs, */QWidget* paren
 	QGLWidget(parent),
 	m_Width(1),
 	m_Height(1),
-	m_ElapsedTime(0.0f),
+	m_ElapsedTime(0UL),
 	m_FrameCounter(0),
 	m_ActiveSceneIdx(0),
 	m_CameraPosition(-1.0f, 8.5f, 9.0f),
@@ -190,7 +190,7 @@ void GlWidget::resizeGL(int w, int h)
 
 void GlWidget::paintGL()
 {
-	float timeStart = (float)m_Elapsed.elapsed() * 0.001f;
+	uint64_t timeStart = m_Elapsed.elapsed();
 
 	glViewport(0, 0, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ShadowFramebuffer);
@@ -292,15 +292,15 @@ void GlWidget::paintGL()
 
 	glUseProgram(0);
 
-	float timeEnd  = (float)m_Elapsed.elapsed() * 0.001f;
+	uint64_t timeEnd = m_Elapsed.elapsed();
 	m_ElapsedTime += (timeEnd - timeStart);
 	m_FrameCounter++;
 
-	if(m_ElapsedTime > 1.0f)
+	if(m_ElapsedTime > 1000)
 	{
-		emit StatsUpdated_RenderMs(m_ElapsedTime / (float)m_FrameCounter);
+		emit StatsUpdated_RenderMs(m_ElapsedTime / m_FrameCounter);
 
-		m_ElapsedTime  = 0.0f;
+		m_ElapsedTime  = 0UL;
 		m_FrameCounter = 0;
 	}
 }

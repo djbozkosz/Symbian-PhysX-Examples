@@ -54,7 +54,7 @@ class GlWidget : public QGLWidget
 	int                      m_Height;
 
 	QElapsedTimer            m_Elapsed;
-	float                    m_ElapsedTime;
+	uint64_t                 m_ElapsedTime;
 	uint                     m_FrameCounter;
 
 	QVector<ISceneProvider*> m_Scenes;

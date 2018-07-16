@@ -42,7 +42,9 @@ Physics::Physics(QObject *parent) :
 	m_Physics(NULL),
 	m_Cooking(NULL),
 	m_ActiveScene(NULL),
-	m_DeltaTime(DELTA_MIN)
+	m_DeltaTime(DELTA_MIN),
+	m_ElapsedTime(0UL),
+	m_FrameCounter(0)
 {
 }
 
@@ -101,12 +103,18 @@ void Physics::Simulate()
 	if(m_ActiveScene == NULL)
 		return;
 
-	uint64_t elapsed = m_Elapsed.elapsed();
+	uint64_t timeStart = m_Elapsed.elapsed();
 
 	m_ActiveScene->simulate(m_DeltaTime);
 	m_ActiveScene->fetchResults(true);
 
-	m_DeltaTime = (m_Elapsed.elapsed() - elapsed) * 0.001f;
+	UpdateFallens();
+
+	uint64_t timeEnd   = m_Elapsed.elapsed();
+	uint64_t timeDelta = timeEnd - timeStart;
+	m_DeltaTime        = timeDelta * 0.001f;
+	m_ElapsedTime     += timeDelta;
+	m_FrameCounter++;
 
 	if(m_DeltaTime < DELTA_MIN)
 	{
@@ -117,7 +125,49 @@ void Physics::Simulate()
 		m_DeltaTime = DELTA_MAX;
 	}
 
+	if(m_ElapsedTime > 1000)
+	{
+		emit StatsUpdated_SimulateMs(m_ElapsedTime / m_FrameCounter);
+
+		m_ElapsedTime  = 0UL;
+		m_FrameCounter = 0;
+
+		uint awakeActors = 0;
+
+		foreach(actor, m_Actors)
+		{
+			physx::PxRigidDynamic* dynamicActor = actor->RigidActor->is<physx::PxRigidDynamic>();
+
+			if(dynamicActor != NULL && dynamicActor->isSleeping() == false)
+			{
+				awakeActors++;
+			}
+		}
+
+		emit StatsUpdated_AwakeActors(awakeActors);
+	}
+
 	emit Simulated();
+}
+
+void Physics::UpdateFallens()
+{
+	foreach(actor, m_Actors)
+	{
+		physx::PxRigidDynamic* dynamicActor = actor->RigidActor->is<physx::PxRigidDynamic>();
+
+		if(dynamicActor != NULL && dynamicActor->isSleeping() == false)
+		{
+			physx::PxTransform transform = dynamicActor->getGlobalPose();
+
+			if(transform.p.y > -10.0f)
+				continue;
+
+			transform.p = physx::PxVec3(0.0f, 50.0f, 0.0f);
+			dynamicActor->setGlobalPose(transform);
+			dynamicActor->setLinearVelocity(physx::PxVec3(physx::PxZero));
+		}
+	}
 }
 
 void Physics::AddActor(physx::PxRigidActor *actor)

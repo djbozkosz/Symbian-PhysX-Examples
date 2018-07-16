@@ -15,6 +15,7 @@
 #include "PxPhysics.h"
 #include "PxSceneDesc.h"
 #include "PxScene.h"
+#include "PxRigidDynamic.h"
 #include "cooking/PxCooking.h"
 #include "extensions/PxExtensionsAPI.h"
 #include "extensions/PxSimpleFactory.h"
@@ -74,6 +75,9 @@ class Physics : public QObject
 	QElapsedTimer        m_Elapsed;
 	float                m_DeltaTime;
 
+	uint64_t             m_ElapsedTime;
+	uint                 m_FrameCounter;
+
 	ErrorCallback        m_ErrorCallback;
 	AllocatorCallback    m_AllocatorCallback;
 
@@ -111,6 +115,8 @@ class Physics : public QObject
 	void Simulate();
 
 	private:
+
+	void UpdateFallens();
 
 	void AddActor(physx::PxRigidActor *actor);
 };
