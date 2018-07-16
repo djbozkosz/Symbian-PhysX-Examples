@@ -22,11 +22,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0" colspan="2">
-     <widget class="QLabel" name="stats">
-      <property name="text">
-       <string>0</string>
-      </property>
-     </widget>
+     <widget class="QLabel" name="stats"/>
     </item>
     <item row="2" column="0">
      <widget class="QPushButton" name="prevScene">
