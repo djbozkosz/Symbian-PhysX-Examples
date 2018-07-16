@@ -103,6 +103,9 @@ class Physics : public QObject
 	void ActorSphereAdded(const ISceneObjectProvider* actor, const QVector4D& color, const QVector2D& tiling);
 	void ActorMeshAdded  (const ISceneObjectProvider* actor, const QVector4D& color, const QVector2D& tiling);
 
+	void StatsUpdated_SimulateMs(float simulateMs);
+	void StatsUpdated_AwakeActors(uint awakeActors);
+
 	private slots:
 
 	void Simulate();

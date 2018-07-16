@@ -15,7 +15,7 @@
 
 #include <QVector>
 
-#include <QTimer>
+#include <QElapsedTimer>
 
 #include <QPushButton>
 
@@ -32,13 +32,8 @@ class GlWidget : public QGLWidget
 
 	Q_OBJECT
 
-	static const uint BUTTON_WIDTH          = 50;
-	static const uint BUTTON_HEIGHT         = 50;
-
 	static const uint SHADOW_TEXTURE_WIDTH  = 1024;
 	static const uint SHADOW_TEXTURE_HEIGHT = 1024;
-
-	protected:
 
 	class RenderObject
 	{
@@ -55,15 +50,12 @@ class GlWidget : public QGLWidget
 		const ISceneObjectProvider* SceneObject;
 	};
 
-	private:
-
 	int                      m_Width;
 	int                      m_Height;
 
-	QSplashScreen*           m_Splash;
-
-	QPushButton*             m_PrevSceneButton;
-	QPushButton*             m_NextSceneButton;
+	QElapsedTimer            m_Elapsed;
+	float                    m_ElapsedTime;
+	uint                     m_FrameCounter;
 
 	QVector<ISceneProvider*> m_Scenes;
 	int                      m_ActiveSceneIdx;
@@ -119,7 +111,7 @@ class GlWidget : public QGLWidget
 
 	public:
 
-	explicit GlWidget(QSplashScreen *splash = NULL, uint splashDelayMs = 5000, QWidget *parent = NULL);
+	explicit GlWidget(QWidget *parent = NULL);
 	virtual ~GlWidget();
 
 	void AddScene(ISceneProvider *scene);
@@ -132,20 +124,19 @@ class GlWidget : public QGLWidget
 
 	public slots:
 
+	void ActivatePrevScene();
+	void ActivateNextScene();
+
 	void AddBox  (const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling);
 	void AddSpere(const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling);
 	void AddMesh (const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D& tiling);
 
-	private slots:
-
-	void Initialize();
-
-	void ActivatePrevScene();
-	void ActivateNextScene();
-
 	signals:
 
 	void Initialized();
+
+	void StatsUpdated_SceneIdx(uint sceneIdx);
+	void StatsUpdated_RenderMs(float renderMs);
 
 	private:
 

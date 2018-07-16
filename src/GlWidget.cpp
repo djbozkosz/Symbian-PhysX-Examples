@@ -1,12 +1,11 @@
 #include "GlWidget.h"
 
-GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
+GlWidget::GlWidget(/*QSplashScreen *splash, uint splashDelayMs, */QWidget* parent) :
 	QGLWidget(parent),
 	m_Width(1),
 	m_Height(1),
-	m_Splash(splash),
-	m_PrevSceneButton(new QPushButton("«", this)),
-	m_NextSceneButton(new QPushButton("»", this)),
+	m_ElapsedTime(0.0f),
+	m_FrameCounter(0),
 	m_ActiveSceneIdx(0),
 	m_CameraPosition(-1.0f, 8.5f, 9.0f),
 	m_IlluminationVertexShader(0),
@@ -37,12 +36,7 @@ GlWidget::GlWidget(QSplashScreen *splash, uint splashDelayMs, QWidget* parent) :
 	m_ShadowTexture(0),
 	m_ShadowDepth(0)
 {
-	setAttribute(Qt::WA_LockLandscapeOrientation);
-
-	connect(m_PrevSceneButton, SIGNAL(clicked()), this, SLOT(ActivatePrevScene()));
-	connect(m_NextSceneButton, SIGNAL(clicked()), this, SLOT(ActivateNextScene()));
-
-	QTimer::singleShot(splashDelayMs, this, SLOT(Initialize()));
+	m_Elapsed.start();
 }
 
 GlWidget::~GlWidget()
@@ -175,11 +169,6 @@ void GlWidget::initializeGL()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	if(m_Splash != NULL)
-	{
-		m_Splash->close();
-	}
-
 	emit Initialized();
 
 	if(m_Scenes.size() > m_ActiveSceneIdx && m_Scenes[m_ActiveSceneIdx] != NULL)
@@ -190,9 +179,6 @@ void GlWidget::initializeGL()
 
 void GlWidget::resizeGL(int w, int h)
 {
-	m_PrevSceneButton->setGeometry(           0, h - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-	m_NextSceneButton->setGeometry(BUTTON_WIDTH, h - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-
 	m_Width  = w;
 	m_Height = h;
 
@@ -204,6 +190,8 @@ void GlWidget::resizeGL(int w, int h)
 
 void GlWidget::paintGL()
 {
+	float timeStart = (float)m_Elapsed.elapsed() * 0.001f;
+
 	glViewport(0, 0, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ShadowFramebuffer);
 
@@ -303,6 +291,18 @@ void GlWidget::paintGL()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
+
+	float timeEnd  = (float)m_Elapsed.elapsed() * 0.001f;
+	m_ElapsedTime += (timeEnd - timeStart);
+	m_FrameCounter++;
+
+	if(m_ElapsedTime > 1.0f)
+	{
+		emit StatsUpdated_RenderMs(m_ElapsedTime / (float)m_FrameCounter);
+
+		m_ElapsedTime  = 0.0f;
+		m_FrameCounter = 0;
+	}
 }
 
 void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector4D& color, const QVector2D& tiling)
@@ -337,11 +337,6 @@ void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector4D 
 {
 }
 
-void GlWidget::Initialize()
-{
-	showFullScreen();
-}
-
 void GlWidget::ActivatePrevScene()
 {
 	m_Scenes[m_ActiveSceneIdx]->Deinitialize();
@@ -354,6 +349,8 @@ void GlWidget::ActivatePrevScene()
 	}
 
 	m_Scenes[m_ActiveSceneIdx]->Initialize();
+
+	emit StatsUpdated_SceneIdx(m_ActiveSceneIdx);
 }
 
 void GlWidget::ActivateNextScene()
@@ -368,6 +365,8 @@ void GlWidget::ActivateNextScene()
 	}
 
 	m_Scenes[m_ActiveSceneIdx]->Initialize();
+
+	emit StatsUpdated_SceneIdx(m_ActiveSceneIdx);
 }
 
 GLuint GlWidget::CreateShader(const char *shaderText, GLenum type)

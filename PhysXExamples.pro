@@ -13,6 +13,7 @@ SOURCES += \
 	src/Splash.cpp \
 	src/GlConstants.cpp \
 	src/GlWidget.cpp \
+	src/MainWindow.cpp \
 	src/Physics.cpp \
 	src/SceneBase.cpp \
 	src/Scene00.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
 	src/Splash.h \
 	src/GlConstants.h \
 	src/GlWidget.h \
+	src/MainWindow.h \
 	src/Physics.h \
 	src/SceneBase.h \
 	src/Scene00.h \
@@ -32,6 +34,9 @@ HEADERS += \
 INCLUDEPATH += \
 	src/PhysX/PhysX_3.4/include \
 	src/PhysX/PxShared/include
+
+FORMS += \
+	ui/MainWindow.ui
 
 QMAKE_CXXFLAGS += -Wall
 QMAKE_CXXFLAGS += -Wextra
