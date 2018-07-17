@@ -203,15 +203,26 @@ void GlWidget::paintGL()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1.0f, 1.0f);
 
+	GLuint lastVertices = 0;
+	GLuint lastIndices  = 0;
+
 	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
 		RenderObject* object = &m_RenderObjects[idx];
 
-		glBindBuffer(GL_ARRAY_BUFFER, object->Vertices);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->Indices);
+		if(lastVertices != object->Vertices || lastIndices != object->Indices)
+		{
+			if(idx > 0)
+			{
+				glDisableVertexAttribArray(m_DepthAttributePosition);
+			}
 
-		glEnableVertexAttribArray(m_DepthAttributePosition);
-		glVertexAttribPointer(m_DepthAttributePosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 0));
+			glBindBuffer(GL_ARRAY_BUFFER, object->Vertices);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->Indices);
+
+			glEnableVertexAttribArray(m_DepthAttributePosition);
+			glVertexAttribPointer(m_DepthAttributePosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 0));
+		}
 
 		object->ModelWorld = object->SceneObject->GetTransform();
 		QMatrix4x4 modelViewProjection = m_CameraShadowViewProjetion * object->ModelWorld;
@@ -220,6 +231,12 @@ void GlWidget::paintGL()
 
 		glDrawElements(GL_TRIANGLES, object->Faces * 3, GL_UNSIGNED_SHORT, NULL);
 
+		lastVertices = object->Vertices;
+		lastIndices  = object->Indices;
+	}
+
+	if(m_RenderObjects.size() > 0)
+	{
 		glDisableVertexAttribArray(m_DepthAttributePosition);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -247,19 +264,34 @@ void GlWidget::paintGL()
 
 	QMatrix4x4 cameraViewProjetion = m_CameraProjetion * m_CameraView;
 
+	glUniform3f(m_IlluminationUniformCamera, m_CameraPosition.x(), m_CameraPosition.y(), m_CameraPosition.z());
+
+	lastVertices = 0;
+	lastIndices  = 0;
+
 	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
 		const RenderObject* object = &m_RenderObjects[idx];
 
-		glBindBuffer(GL_ARRAY_BUFFER, object->Vertices);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->Indices);
+		if(lastVertices != object->Vertices || lastIndices != object->Indices)
+		{
+			if(idx > 0)
+			{
+				glDisableVertexAttribArray(m_IlluminationAttributePosition);
+				glDisableVertexAttribArray(m_IlluminationAttributeNormal);
+				glDisableVertexAttribArray(m_IlluminationAttributeTextureCoord);
+			}
 
-		glEnableVertexAttribArray(m_IlluminationAttributePosition);
-		glEnableVertexAttribArray(m_IlluminationAttributeNormal);
-		glEnableVertexAttribArray(m_IlluminationAttributeTextureCoord);
-		glVertexAttribPointer(m_IlluminationAttributePosition,     3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 0));
-		glVertexAttribPointer(m_IlluminationAttributeNormal,       3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 3));
-		glVertexAttribPointer(m_IlluminationAttributeTextureCoord, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 6));
+			glBindBuffer(GL_ARRAY_BUFFER, object->Vertices);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->Indices);
+
+			glEnableVertexAttribArray(m_IlluminationAttributePosition);
+			glEnableVertexAttribArray(m_IlluminationAttributeNormal);
+			glEnableVertexAttribArray(m_IlluminationAttributeTextureCoord);
+			glVertexAttribPointer(m_IlluminationAttributePosition,     3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 0));
+			glVertexAttribPointer(m_IlluminationAttributeNormal,       3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 3));
+			glVertexAttribPointer(m_IlluminationAttributeTextureCoord, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, reinterpret_cast<float *>(sizeof(float) * 6));
+		}
 
 		QMatrix4x4 modelViewProjection                = cameraViewProjetion * object->ModelWorld;
 		QMatrix3x3 modelWorldNormalInversedTransposed = object->ModelWorld.inverted().transposed().normalMatrix();
@@ -270,12 +302,17 @@ void GlWidget::paintGL()
 		glUniformMatrix3fv(m_IlluminationUniformMNIT,      1, GL_FALSE, Matrix3x3ToFloat(modelWorldNormalInversedTransposed).data());
 		glUniformMatrix4fv(m_IlluminationUniformMVPShadow, 1, GL_FALSE, Matrix4x4ToFloat(modelViewProjectionShadow).data());
 
-		glUniform3f(m_IlluminationUniformCamera, m_CameraPosition.x(), m_CameraPosition.y(), m_CameraPosition.z());
 		glUniform4f(m_IlluminationUniformColor, object->Color.x(), object->Color.y(), object->Color.z(), object->Color.w());
 		glUniform2f(m_IlluminationUniformTiling, object->Tiling.x(), object->Tiling.y());
 
 		glDrawElements(GL_TRIANGLES, object->Faces * 3, GL_UNSIGNED_SHORT, NULL);
 
+		lastVertices = object->Vertices;
+		lastIndices  = object->Indices;
+	}
+
+	if(m_RenderObjects.size() > 0)
+	{
 		glDisableVertexAttribArray(m_IlluminationAttributePosition);
 		glDisableVertexAttribArray(m_IlluminationAttributeNormal);
 		glDisableVertexAttribArray(m_IlluminationAttributeTextureCoord);
