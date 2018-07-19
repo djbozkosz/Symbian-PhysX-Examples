@@ -1,15 +1,15 @@
 #ifndef SCENE01_H
 #define SCENE01_H
 
-#include "foundation/PxMat44.h"
-#include "PxRigidStatic.h"
-#include "PxRigidDynamic.h"
-#include "PxMaterial.h"
-#include "geometry/PxPlaneGeometry.h"
-#include "geometry/PxBoxGeometry.h"
-#include "geometry/PxSphereGeometry.h"
-#include "extensions/PxJoint.h"
-#include "extensions/PxSphericalJoint.h"
+#include <foundation/PxMat44.h>
+#include <PxRigidStatic.h>
+#include <PxRigidDynamic.h>
+#include <PxMaterial.h>
+#include <geometry/PxPlaneGeometry.h>
+#include <geometry/PxBoxGeometry.h>
+#include <geometry/PxSphereGeometry.h>
+#include <extensions/PxJoint.h>
+#include <extensions/PxSphericalJoint.h>
 
 #include "SceneBase.h"
 

@@ -7,18 +7,18 @@
 #include <QLinkedList>
 
 #include <foundation/PxFoundation.h>
-#include "foundation/PxFoundationVersion.h"
-#include "foundation/PxErrors.h"
-#include "foundation/PxErrorCallback.h"
-#include "foundation/PxAllocatorCallback.h"
-#include "PxPhysicsVersion.h"
-#include "PxPhysics.h"
-#include "PxSceneDesc.h"
-#include "PxScene.h"
-#include "PxRigidDynamic.h"
-#include "cooking/PxCooking.h"
-#include "extensions/PxExtensionsAPI.h"
-#include "extensions/PxSimpleFactory.h"
+#include <foundation/PxFoundationVersion.h>
+#include <foundation/PxErrors.h>
+#include <foundation/PxErrorCallback.h>
+#include <foundation/PxAllocatorCallback.h>
+#include <PxPhysicsVersion.h>
+#include <PxPhysics.h>
+#include <PxSceneDesc.h>
+#include <PxScene.h>
+#include <PxRigidDynamic.h>
+#include <cooking/PxCooking.h>
+#include <extensions/PxExtensionsAPI.h>
+#include <extensions/PxSimpleFactory.h>
 
 #include "ISceneObjectProvider.h"
 
@@ -87,6 +87,7 @@ class Physics : public QObject
 	virtual ~Physics();
 
 	inline physx::PxPhysics* GetPhysics() const { return m_Physics; }
+	inline physx::PxCooking* GetCooking() const { return m_Cooking; }
 	inline void SetActiveScene(physx::PxScene* scene) { m_ActiveScene = scene; }
 
 	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
