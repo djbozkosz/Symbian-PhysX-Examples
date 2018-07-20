@@ -1,5 +1,8 @@
 #include "Physics.h"
 
+const float Physics::DELTA_MIN = 1.0f / 60.0f;
+const float Physics::DELTA_MAX = 1.0f / 5.0f;
+
 void ErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line)
 {
 	qDebug() << code << message << file << line;
@@ -36,8 +39,6 @@ void AllocatorCallback::deallocate(void* ptr)
 
 Physics::Physics(QObject *parent) :
 	QObject(parent),
-	DELTA_MIN(1.0f / 60.0f),
-	DELTA_MAX(1.0f / 5.0f),
 	m_Foundation(NULL),
 	m_Physics(NULL),
 	m_Cooking(NULL),

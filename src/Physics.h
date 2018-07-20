@@ -39,8 +39,8 @@ class Physics : public QObject
 
 	Q_OBJECT
 
-	float DELTA_MIN;
-	float DELTA_MAX;
+	static const float DELTA_MIN;
+	static const float DELTA_MAX;
 
 	protected:
 
