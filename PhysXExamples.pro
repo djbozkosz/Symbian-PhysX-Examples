@@ -55,30 +55,6 @@ CONFIG(release, debug|release) {
 	QMAKE_CXXFLAGS += -O0
 }
 
-LIBS += \
-	-lPhysXVehicle.lib \
-	-lPhysXCharacterKinematic.lib \
-	-lPhysXExtensions.lib \
-	-lPhysX.lib \
-	-lPhysXSceneQuery.lib \
-	-lPhysXSimulationController.lib \
-	-lPhysXCooking.lib \
-	-lPhysXLowLevelAABB.lib \
-	-lPhysXLowLevelCloth.lib \
-	-lPhysXLowLevelDynamics.lib \
-	-lPhysXLowLevelParticles.lib \
-	-lPhysXLowLevel.lib \
-	-lPhysXCommon.lib \
-	-lPhysXPvdSDK.lib \
-	-lPhysXTask.lib \
-	-lPhysXFoundation.lib \
-	-lPhysXFastXml.lib \
-	-llibstdcpp \
-	-llibc \
-	-llibm \
-	-llibpthread \
-	-lusrt3_1.lib
-
 symbian {
 	DEPLOYMENT.display_name = PhysX Examples
 	VERSION = 0.0.1
@@ -86,6 +62,30 @@ symbian {
 	TARGET.EPOCSTACKSIZE = 0x16000
 	TARGET.EPOCHEAPSIZE = 0x200000 0x20000000
 	ICON = images/icon.svg
+
+	LIBS += \
+		-lPhysXVehicle.lib \
+		-lPhysXCharacterKinematic.lib \
+		-lPhysXExtensions.lib \
+		-lPhysX.lib \
+		-lPhysXSceneQuery.lib \
+		-lPhysXSimulationController.lib \
+		-lPhysXCooking.lib \
+		-lPhysXLowLevelAABB.lib \
+		-lPhysXLowLevelCloth.lib \
+		-lPhysXLowLevelDynamics.lib \
+		-lPhysXLowLevelParticles.lib \
+		-lPhysXLowLevel.lib \
+		-lPhysXCommon.lib \
+		-lPhysXPvdSDK.lib \
+		-lPhysXTask.lib \
+		-lPhysXFoundation.lib \
+		-lPhysXFastXml.lib \
+		-llibstdcpp \
+		-llibc \
+		-llibm \
+		-llibpthread \
+		-lusrt3_1.lib
 }
 
 RESOURCES += \
