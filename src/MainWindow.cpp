@@ -10,7 +10,9 @@ MainWindow::MainWindow(QSplashScreen* splash, uint splashDelayMs, QWidget* paren
 {
 	m_Ui->setupUi(this);
 
+#ifdef Q_OS_SYMBIAN
 	setAttribute(Qt::WA_LockLandscapeOrientation);
+#endif
 
 	connect(m_Ui->prevScene, SIGNAL(clicked()), m_Ui->glWidget, SLOT(ActivatePrevScene()));
 	connect(m_Ui->nextScene, SIGNAL(clicked()), m_Ui->glWidget, SLOT(ActivateNextScene()));

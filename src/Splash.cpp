@@ -3,7 +3,9 @@
 Splash::Splash(QWidget *parent) :
 	QSplashScreen(parent)
 {
+#ifdef Q_OS_SYMBIAN
 	setAttribute(Qt::WA_LockLandscapeOrientation);
+#endif
 	installEventFilter(this);
 }
 
