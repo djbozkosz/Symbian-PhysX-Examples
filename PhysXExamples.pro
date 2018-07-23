@@ -41,24 +41,32 @@ FORMS += \
 	ui/MainWindow.ui
 
 win32 {
+	CONFIG(release, debug|release) {
+		DEFINES += NDEBUG
+	} else {
+		DEFINES += _DEBUG
+	}
+
+	DEFINES += PX_FOUNDATION_STATIC_LIB PX_PHYSX_STATIC_LIB
+
 	LIBS += \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXVehicle.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCharacterKinematic.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXExtensions.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysX.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXSceneQuery.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXSimulationController.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCooking.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelAABB.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelCloth.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelDynamics.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelParticles.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevel.a \
-		src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCommon.a \
-		src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXPvdSDK.a \
-		src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXTask.a \
-		src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXFoundation.a \
-		src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXFastXml.a
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXVehicle.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCharacterKinematic.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXExtensions.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysX.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXSceneQuery.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXSimulationController.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCooking.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelAABB.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelCloth.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelDynamics.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelParticles.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevel.a \
+		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCommon.a \
+		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXPvdSDK.a \
+		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXTask.a \
+		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXFoundation.a \
+		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXFastXml.a
 }
 
 QMAKE_CXXFLAGS += -Wall
