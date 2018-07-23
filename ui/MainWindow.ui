@@ -93,7 +93,7 @@
   <customwidget>
    <class>GlWidget</class>
    <extends>QWidget</extends>
-   <header location="global">GlWidget.h</header>
+   <header location="global">src/GlWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
