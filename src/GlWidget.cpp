@@ -68,6 +68,47 @@ void GlWidget::AddScene(ISceneProvider *scene)
 
 void GlWidget::initializeGL()
 {
+	glCreateShader             = reinterpret_cast<TCreateShader>            (wglGetProcAddress("glCreateShader"            ));
+	glShaderSource             = reinterpret_cast<TShaderSource>            (wglGetProcAddress("glShaderSource"            ));
+	glCompileShader            = reinterpret_cast<TCompileShader>           (wglGetProcAddress("glCompileShader"           ));
+	glGetShaderiv              = reinterpret_cast<TGetShaderiv>             (wglGetProcAddress("glGetShaderiv"             ));
+	glGetShaderInfoLog         = reinterpret_cast<TGetShaderInfoLog>        (wglGetProcAddress("glGetShaderInfoLog"        ));
+	glCreateProgram            = reinterpret_cast<TCreateProgram>           (wglGetProcAddress("glCreateProgram"           ));
+	glAttachShader             = reinterpret_cast<TAttachShader>            (wglGetProcAddress("glAttachShader"            ));
+	glLinkProgram              = reinterpret_cast<TLinkProgram>             (wglGetProcAddress("glLinkProgram"             ));
+	glGetProgramiv             = reinterpret_cast<TGetProgramiv>            (wglGetProcAddress("glGetProgramiv"            ));
+	glGetProgramInfoLog        = reinterpret_cast<TGetProgramInfoLog>       (wglGetProcAddress("glGetProgramInfoLog"       ));
+	glUseProgram               = reinterpret_cast<TUseProgram>              (wglGetProcAddress("glUseProgram"              ));
+	glGenBuffers               = reinterpret_cast<TGenBuffers>              (wglGetProcAddress("glGenBuffers"              ));
+	glBindBuffer               = reinterpret_cast<TBindBuffer>              (wglGetProcAddress("glBindBuffer"              ));
+	glBufferData               = reinterpret_cast<TBufferData>              (wglGetProcAddress("glBufferData"              ));
+	glActiveTexture            = reinterpret_cast<TActiveTexture>           (wglGetProcAddress("glActiveTexture"           ));
+	glGenerateMipmap           = reinterpret_cast<TGenerateMipmap>          (wglGetProcAddress("glGenerateMipmap"          ));
+	glGenFramebuffers          = reinterpret_cast<TGenFramebuffers>         (wglGetProcAddress("glGenFramebuffers"         ));
+	glBindFramebuffer          = reinterpret_cast<TBindFramebuffer>         (wglGetProcAddress("glBindFramebuffer"         ));
+	glFramebufferTexture2D     = reinterpret_cast<TFramebufferTexture2D>    (wglGetProcAddress("glFramebufferTexture2D"    ));
+	glFramebufferRenderbuffer  = reinterpret_cast<TFramebufferRenderbuffer> (wglGetProcAddress("glFramebufferRenderbuffer" ));
+	glGenRenderbuffers         = reinterpret_cast<TGenRenderbuffers>        (wglGetProcAddress("glGenRenderbuffers"        ));
+	glBindRenderbuffer         = reinterpret_cast<TBindRenderbuffer>        (wglGetProcAddress("glBindRenderbuffer"        ));
+	glRenderbufferStorage      = reinterpret_cast<TRenderbufferStorage>     (wglGetProcAddress("glRenderbufferStorage"     ));
+	glCheckFramebufferStatus   = reinterpret_cast<TCheckFramebufferStatus>  (wglGetProcAddress("glCheckFramebufferStatus"  ));
+	glEnableVertexAttribArray  = reinterpret_cast<TEnableVertexAttribArray> (wglGetProcAddress("glEnableVertexAttribArray" ));
+	glDisableVertexAttribArray = reinterpret_cast<TDisableVertexAttribArray>(wglGetProcAddress("glDisableVertexAttribArray"));
+	glVertexAttribPointer      = reinterpret_cast<TVertexAttribPointer>     (wglGetProcAddress("glVertexAttribPointer"     ));
+	glGetAttribLocation        = reinterpret_cast<TGetAttribLocation>       (wglGetProcAddress("glGetAttribLocation"       ));
+	glGetUniformLocation       = reinterpret_cast<TGetUniformLocation>      (wglGetProcAddress("glGetUniformLocation"      ));
+	glUniform1i                = reinterpret_cast<TUniform1i>               (wglGetProcAddress("glUniform1i"               ));
+	glUniform2f                = reinterpret_cast<TUniform2f>               (wglGetProcAddress("glUniform2f"               ));
+	glUniform3f                = reinterpret_cast<TUniform3f>               (wglGetProcAddress("glUniform3f"               ));
+	glUniform4f                = reinterpret_cast<TUniform4f>               (wglGetProcAddress("glUniform4f"               ));
+	glUniformMatrix3fv         = reinterpret_cast<TUniformMatrix3fv>        (wglGetProcAddress("glUniformMatrix3fv"        ));
+	glUniformMatrix4fv         = reinterpret_cast<TUniformMatrix4fv>        (wglGetProcAddress("glUniformMatrix4fv"        ));
+	glDeleteBuffers            = reinterpret_cast<TDeleteBuffers>           (wglGetProcAddress("glDeleteBuffers"           ));
+	glDeleteProgram            = reinterpret_cast<TDeleteProgram>           (wglGetProcAddress("glDeleteProgram"           ));
+	glDeleteShader             = reinterpret_cast<TDeleteShader>            (wglGetProcAddress("glDeleteShader"            ));
+	glDeleteRenderbuffers      = reinterpret_cast<TDeleteRenderbuffers>     (wglGetProcAddress("glDeleteRenderbuffers"     ));
+	glDeleteFramebuffers       = reinterpret_cast<TDeleteFramebuffers>      (wglGetProcAddress("glDeleteFramebuffers"      ));
+
 	m_IlluminationVertexShader          = CreateShader(GlConstants::ILLUMINATION_VERTEX_SHADER, GL_VERTEX_SHADER);
 	m_IlluminationFragmentShader        = CreateShader(GlConstants::ILLUMINATION_FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
 	m_IlluminationShaderProgram         = CreateProgram(m_IlluminationVertexShader, m_IlluminationFragmentShader);

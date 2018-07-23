@@ -19,7 +19,9 @@
 
 #include <QPushButton>
 
+#ifdef Q_OS_SYMBIAN
 #include <GLES2/gl2.h>
+#endif
 
 #include "ISceneProvider.h"
 #include "ISceneObjectProvider.h"
@@ -109,6 +111,90 @@ class GlWidget : public QGLWidget
 	GLuint                   m_ShadowTexture;
 	GLuint                   m_ShadowDepth;
 
+#ifdef Q_OS_WIN
+	typedef GLuint(APIENTRY  *TCreateShader)            (GLenum type);
+	typedef void  (APIENTRY  *TShaderSource)            (GLuint shader, GLsizei count, const GLchar *const*string, const GLint *length);
+	typedef void  (APIENTRY  *TCompileShader)           (GLuint shader);
+	typedef void  (APIENTRY  *TGetShaderiv)             (GLuint shader, GLenum pname, GLint *params);
+	typedef void  (APIENTRY  *TGetShaderInfoLog)        (GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog);
+	typedef GLuint(APIENTRY  *TCreateProgram)           (void);
+	typedef void  (APIENTRY  *TAttachShader)            (GLuint program, GLuint shader);
+	typedef void  (APIENTRY  *TLinkProgram)             (GLuint program);
+	typedef void  (APIENTRY  *TGetProgramiv)            (GLuint program, GLenum pname, GLint *params);
+	typedef void  (APIENTRY  *TGetProgramInfoLog)       (GLuint program, GLsizei bufSize, GLsizei *length, GLchar *infoLog);
+	typedef void  (APIENTRY  *TUseProgram)              (GLuint program);
+	typedef void  (APIENTRY  *TGenBuffers)              (GLsizei n, GLuint *buffers);
+	typedef void  (APIENTRY  *TBindBuffer)              (GLenum target, GLuint buffer);
+	typedef void  (APIENTRY  *TBufferData)              (GLenum target, GLsizeiptr size, const void *data, GLenum usage);
+	typedef void  (APIENTRY  *TActiveTexture)           (GLenum texture);
+	typedef void  (APIENTRY  *TGenerateMipmap)          (GLenum target);
+	typedef void  (APIENTRY  *TGenFramebuffers)         (GLsizei n, GLuint* framebuffers);
+	typedef void  (APIENTRY  *TBindFramebuffer)         (GLenum target, GLuint framebuffer);
+	typedef void  (APIENTRY  *TFramebufferTexture2D)    (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
+	typedef void  (APIENTRY  *TFramebufferRenderbuffer) (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+	typedef void  (APIENTRY  *TGenRenderbuffers)        (GLsizei n, GLuint* renderbuffers);
+	typedef void  (APIENTRY  *TBindRenderbuffer)        (GLenum target, GLuint renderbuffer);
+	typedef void  (APIENTRY  *TRenderbufferStorage)     (GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
+	typedef GLenum(APIENTRY  *TCheckFramebufferStatus)  (GLenum target);
+	typedef void  (APIENTRY  *TEnableVertexAttribArray) (GLuint index);
+	typedef void  (APIENTRY  *TDisableVertexAttribArray)(GLuint index);
+	typedef void  (APIENTRY  *TVertexAttribPointer)     (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
+	typedef GLint (APIENTRY  *TGetAttribLocation)       (GLuint program, const GLchar *name);
+	typedef GLint (APIENTRY  *TGetUniformLocation)      (GLuint program, const GLchar *name);
+	typedef void  (APIENTRY  *TUniform1i)               (GLint location, GLint x);
+	typedef void  (APIENTRY  *TUniform2f)               (GLint location, GLfloat x, GLfloat y);
+	typedef void  (APIENTRY  *TUniform3f)               (GLint location, GLfloat x, GLfloat y, GLfloat z);
+	typedef void  (APIENTRY  *TUniform4f)               (GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+	typedef void  (APIENTRY  *TUniformMatrix3fv)        (GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
+	typedef void  (APIENTRY  *TUniformMatrix4fv)        (GLint location, GLsizei count, GLboolean transpose, const GLfloat* value);
+	typedef void  (APIENTRY  *TDeleteBuffers)           (GLsizei n, const GLuint* buffers);
+	typedef void  (APIENTRY  *TDeleteProgram)           (GLuint program);
+	typedef void  (APIENTRY  *TDeleteShader)            (GLuint shader);
+	typedef void  (APIENTRY  *TDeleteRenderbuffers)     (GLsizei n, const GLuint* renderbuffers);
+	typedef void  (APIENTRY  *TDeleteFramebuffers)      (GLsizei n, const GLuint* framebuffers);
+
+	TCreateShader             glCreateShader;
+	TShaderSource             glShaderSource;
+	TCompileShader            glCompileShader;
+	TGetShaderiv              glGetShaderiv;
+	TGetShaderInfoLog         glGetShaderInfoLog;
+	TCreateProgram            glCreateProgram;
+	TAttachShader             glAttachShader;
+	TLinkProgram              glLinkProgram;
+	TGetProgramiv             glGetProgramiv;
+	TGetProgramInfoLog        glGetProgramInfoLog;
+	TUseProgram               glUseProgram;
+	TGenBuffers               glGenBuffers;
+	TBindBuffer               glBindBuffer;
+	TBufferData               glBufferData;
+	TActiveTexture            glActiveTexture;
+	TGenerateMipmap           glGenerateMipmap;
+	TGenFramebuffers          glGenFramebuffers;
+	TBindFramebuffer          glBindFramebuffer;
+	TFramebufferTexture2D     glFramebufferTexture2D;
+	TFramebufferRenderbuffer  glFramebufferRenderbuffer;
+	TGenRenderbuffers         glGenRenderbuffers;
+	TBindRenderbuffer         glBindRenderbuffer;
+	TRenderbufferStorage      glRenderbufferStorage;
+	TCheckFramebufferStatus   glCheckFramebufferStatus;
+	TEnableVertexAttribArray  glEnableVertexAttribArray;
+	TDisableVertexAttribArray glDisableVertexAttribArray;
+	TVertexAttribPointer      glVertexAttribPointer;
+	TGetAttribLocation        glGetAttribLocation;
+	TGetUniformLocation       glGetUniformLocation;
+	TUniform1i                glUniform1i;
+	TUniform2f                glUniform2f;
+	TUniform3f                glUniform3f;
+	TUniform4f                glUniform4f;
+	TUniformMatrix3fv         glUniformMatrix3fv;
+	TUniformMatrix4fv         glUniformMatrix4fv;
+	TDeleteBuffers            glDeleteBuffers;
+	TDeleteProgram            glDeleteProgram;
+	TDeleteShader             glDeleteShader;
+	TDeleteRenderbuffers      glDeleteRenderbuffers;
+	TDeleteFramebuffers       glDeleteFramebuffers;
+#endif
+
 	public:
 
 	explicit GlWidget(QWidget *parent = NULL);
@@ -140,8 +226,8 @@ class GlWidget : public QGLWidget
 
 	private:
 
-	static GLuint CreateShader(const char* shaderText, GLenum type);
-	static GLuint CreateProgram(GLuint vertexShader, GLuint fragmentShader);
+	GLuint CreateShader(const char* shaderText, GLenum type);
+	GLuint CreateProgram(GLuint vertexShader, GLuint fragmentShader);
 
 	void CreateVertexBuffer(GLuint *vertexBuffer, GLenum type, uint size, const void* data);
 	void CreateVertices(GLuint *vertexBuffer, uint count, const void* data);
