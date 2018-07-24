@@ -49,24 +49,27 @@ win32 {
 
 	DEFINES += PX_FOUNDATION_STATIC_LIB PX_PHYSX_STATIC_LIB
 
+	LIBS_PATH_PHYSX    = ../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib
+	LIBS_PATH_PXSHARED = ../src/PhysX/PxShared/src/compiler/make_win32/lib
+
 	LIBS += \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXVehicle.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCharacterKinematic.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXExtensions.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysX.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXSceneQuery.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXSimulationController.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCooking.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelAABB.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelCloth.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelDynamics.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevelParticles.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXLowLevel.a \
-		../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib/PhysXCommon.a \
-		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXPvdSDK.a \
-		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXTask.a \
-		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXFoundation.a \
-		../src/PhysX/PxShared/src/compiler/make_win32/lib/PhysXFastXml.a
+		$${LIBS_PATH_PHYSX}/PhysXVehicle.a \
+		$${LIBS_PATH_PHYSX}/PhysXCharacterKinematic.a \
+		$${LIBS_PATH_PHYSX}/PhysXExtensions.a \
+		$${LIBS_PATH_PHYSX}/PhysX.a \
+		$${LIBS_PATH_PHYSX}/PhysXSceneQuery.a \
+		$${LIBS_PATH_PHYSX}/PhysXSimulationController.a \
+		$${LIBS_PATH_PHYSX}/PhysXCooking.a \
+		$${LIBS_PATH_PHYSX}/PhysXLowLevelAABB.a \
+		$${LIBS_PATH_PHYSX}/PhysXLowLevelCloth.a \
+		$${LIBS_PATH_PHYSX}/PhysXLowLevelDynamics.a \
+		$${LIBS_PATH_PHYSX}/PhysXLowLevelParticles.a \
+		$${LIBS_PATH_PHYSX}/PhysXLowLevel.a \
+		$${LIBS_PATH_PHYSX}/PhysXCommon.a \
+		$${LIBS_PATH_PXSHARED}/PhysXPvdSDK.a \
+		$${LIBS_PATH_PXSHARED}/PhysXTask.a \
+		$${LIBS_PATH_PXSHARED}/PhysXFoundation.a \
+		$${LIBS_PATH_PXSHARED}/PhysXFastXml.a
 }
 
 QMAKE_CXXFLAGS += -Wall
