@@ -70,6 +70,10 @@ win32 {
 		$${LIBS_PATH_PXSHARED}/PhysXTask.a \
 		$${LIBS_PATH_PXSHARED}/PhysXFoundation.a \
 		$${LIBS_PATH_PXSHARED}/PhysXFastXml.a
+
+	#LIBS += -llibstdc++
+
+	QMAKE_CXXFLAGS += -w
 }
 
 QMAKE_CXXFLAGS += -Wall
