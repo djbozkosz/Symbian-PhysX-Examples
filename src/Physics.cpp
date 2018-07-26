@@ -65,7 +65,7 @@ void Physics::Initialize()
 	m_Cooking    = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, physx::PxCookingParams(m_Physics->getTolerancesScale()));
 	PxInitExtensions(*m_Physics, NULL);
 
-	m_Timer.setInterval(m_DeltaTime);
+	m_Timer.setInterval((int)(m_DeltaTime * 1000.0f));
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(Simulate()));
 	m_Timer.start();
 	m_Elapsed.start();
