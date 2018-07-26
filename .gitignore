@@ -1,6 +1,5 @@
-moc/*.cpp
-rcc/*.cpp
 Makefile
+build/Makefile*
 .make.cache
 bld.inf
 *.loc
@@ -9,3 +8,13 @@ bld.inf
 *.rss
 *.user
 *.sis
+ui/*.h
+moc/*.cpp
+rcc/*.cpp
+build/object_script*
+build/*.cpp
+build/*.h
+build/*.o
+build/*/*.cpp
+build/*/*.h
+build/*/*.o
