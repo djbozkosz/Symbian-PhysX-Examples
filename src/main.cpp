@@ -18,12 +18,16 @@ int main(int argc, char *argv[])
 	QCoreApplication::setAttribute(Qt::AA_S60DisablePartialScreenInputMode, false);
 #endif
 
-	Splash splash;
-	splash.showFullScreen();
+	Splash* splash = new Splash();
+#ifdef Q_OS_SYMBIAN
+	splash->showFullScreen();
+#else
+	splash->show();
+#endif
 
 	application.processEvents();
 
-	MainWindow mainWindow(&splash, 2000);
+	MainWindow mainWindow(splash, 2000);
 	Physics    physics;
 	Scene00    sample00(&physics);
 	Scene01    sample01(&physics);
