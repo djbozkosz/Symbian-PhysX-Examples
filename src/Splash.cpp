@@ -5,6 +5,8 @@ Splash::Splash(QWidget *parent) :
 {
 #ifdef Q_OS_SYMBIAN
 	setAttribute(Qt::WA_LockLandscapeOrientation);
+#else
+	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, QSize(640, 360), qApp->desktop()->availableGeometry()));
 #endif
 	installEventFilter(this);
 }

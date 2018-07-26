@@ -3,6 +3,9 @@
 
 #include <QApplication>
 #include <QMainWindow>
+#include <QDesktopWidget>
+#include <QSplashScreen>
+#include <QSize>
 
 #include <QTimer>
 
@@ -20,6 +23,8 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 	Ui::MainWindow* m_Ui;
+
+	QSplashScreen* m_Splash;
 
 	uint  m_SceneIdx;
 	float m_RenderMs;

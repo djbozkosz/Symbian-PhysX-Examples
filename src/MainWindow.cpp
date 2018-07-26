@@ -3,6 +3,7 @@
 MainWindow::MainWindow(QSplashScreen* splash, uint splashDelayMs, QWidget* parent) :
 	QMainWindow(parent),
 	m_Ui(new Ui::MainWindow),
+	m_Splash(splash),
 	m_SceneIdx(0),
 	m_RenderMs(0.0f),
 	m_SimulateMs(0.0f),
@@ -12,6 +13,8 @@ MainWindow::MainWindow(QSplashScreen* splash, uint splashDelayMs, QWidget* paren
 
 #ifdef Q_OS_SYMBIAN
 	setAttribute(Qt::WA_LockLandscapeOrientation);
+#else
+	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, QSize(640, 360), qApp->desktop()->availableGeometry()));
 #endif
 
 	connect(m_Ui->prevScene, SIGNAL(clicked()), m_Ui->glWidget, SLOT(ActivatePrevScene()));
@@ -28,7 +31,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::Initialize()
 {
+#ifdef Q_OS_SYMBIAN
 	showFullScreen();
+#else
+	show();
+#endif
+
+	m_Splash->deleteLater();
 }
 
 void MainWindow::UpdateStats()

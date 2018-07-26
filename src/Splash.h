@@ -1,11 +1,15 @@
 #ifndef SPLASH_H
 #define SPLASH_H
 
+#include <QApplication>
 #include <QSplashScreen>
+#include <QDesktopWidget>
+#include <QStyle>
 #include <QPainter>
 #include <QPixmap>
 #include <QColor>
 #include <QRect>
+#include <QSize>
 
 #include <QEvent>
 
