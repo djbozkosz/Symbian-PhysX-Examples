@@ -6,7 +6,7 @@ bld.inf
 *.mmp
 *.pkg
 *.rss
-*.user
+*.user*
 *.sis
 ui/*.h
 moc/*.cpp
