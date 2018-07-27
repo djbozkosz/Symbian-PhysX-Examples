@@ -68,6 +68,7 @@ void GlWidget::AddScene(ISceneProvider *scene)
 
 void GlWidget::initializeGL()
 {
+#ifdef Q_OS_WIN
 	glCreateShader             = reinterpret_cast<TCreateShader>            (wglGetProcAddress("glCreateShader"            ));
 	glShaderSource             = reinterpret_cast<TShaderSource>            (wglGetProcAddress("glShaderSource"            ));
 	glCompileShader            = reinterpret_cast<TCompileShader>           (wglGetProcAddress("glCompileShader"           ));
@@ -108,6 +109,7 @@ void GlWidget::initializeGL()
 	glDeleteShader             = reinterpret_cast<TDeleteShader>            (wglGetProcAddress("glDeleteShader"            ));
 	glDeleteRenderbuffers      = reinterpret_cast<TDeleteRenderbuffers>     (wglGetProcAddress("glDeleteRenderbuffers"     ));
 	glDeleteFramebuffers       = reinterpret_cast<TDeleteFramebuffers>      (wglGetProcAddress("glDeleteFramebuffers"      ));
+#endif
 
 	m_IlluminationVertexShader          = CreateShader(GlConstants::ILLUMINATION_VERTEX_SHADER, GL_VERTEX_SHADER);
 	m_IlluminationFragmentShader        = CreateShader(GlConstants::ILLUMINATION_FRAGMENT_SHADER, GL_FRAGMENT_SHADER);
