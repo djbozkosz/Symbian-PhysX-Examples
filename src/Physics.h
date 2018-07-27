@@ -20,6 +20,7 @@
 #include <extensions/PxExtensionsAPI.h>
 #include <extensions/PxSimpleFactory.h>
 
+#include "ISceneProvider.h"
 #include "ISceneObjectProvider.h"
 
 class ErrorCallback : public physx::PxErrorCallback
@@ -31,6 +32,13 @@ class AllocatorCallback : public physx::PxAllocatorCallback
 {
 	virtual void* allocate(size_t size, const char* typeName, const char* filename, int line);
 	virtual void  deallocate(void* ptr);
+};
+
+class IPhysicsSceneProvider : public ISceneProvider
+{
+	public:
+
+	virtual physx::PxScene* GetScene() const = 0;
 };
 
 class Physics : public QObject
@@ -61,25 +69,25 @@ class Physics : public QObject
 		virtual QVector<ushort>    GetIndices()           const;
 	};
 
-	physx::PxFoundation* m_Foundation;
-	physx::PxPhysics*    m_Physics;
-	physx::PxCooking*    m_Cooking;
+	physx::PxFoundation*   m_Foundation;
+	physx::PxPhysics*      m_Physics;
+	physx::PxCooking*      m_Cooking;
 
-	physx::PxScene*      m_ActiveScene;
+	IPhysicsSceneProvider* m_ActiveScene;
 
-	QLinkedList<Actor>   m_Actors;
+	QLinkedList<Actor>     m_Actors;
 
 	private:
 
-	QTimer               m_Timer;
-	QElapsedTimer        m_Elapsed;
-	float                m_DeltaTime;
+	QTimer                 m_Timer;
+	QElapsedTimer          m_Elapsed;
+	float                  m_DeltaTime;
 
-	uint64_t             m_ElapsedTime;
-	uint                 m_FrameCounter;
+	uint64_t               m_ElapsedTime;
+	uint                   m_FrameCounter;
 
-	ErrorCallback        m_ErrorCallback;
-	AllocatorCallback    m_AllocatorCallback;
+	ErrorCallback          m_ErrorCallback;
+	AllocatorCallback      m_AllocatorCallback;
 
 	public:
 
@@ -88,7 +96,7 @@ class Physics : public QObject
 
 	inline physx::PxPhysics* GetPhysics() const { return m_Physics; }
 	inline physx::PxCooking* GetCooking() const { return m_Cooking; }
-	inline void SetActiveScene(physx::PxScene* scene) { m_ActiveScene = scene; }
+	inline void SetActiveScene(IPhysicsSceneProvider* scene) { m_ActiveScene = scene; }
 
 	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
 	void AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);

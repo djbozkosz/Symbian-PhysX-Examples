@@ -65,7 +65,11 @@ void Physics::Initialize()
 	m_Cooking    = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, physx::PxCookingParams(m_Physics->getTolerancesScale()));
 	PxInitExtensions(*m_Physics, NULL);
 
+#ifdef Q_OS_SYMBIAN
+	m_Timer.setInterval(0);
+#else
 	m_Timer.setInterval((int)(m_DeltaTime * 1000.0f));
+#endif
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(Simulate()));
 	m_Timer.start();
 	m_Elapsed.start();
@@ -106,9 +110,10 @@ void Physics::Simulate()
 
 	uint64_t timeStart = m_Elapsed.elapsed();
 
-	m_ActiveScene->simulate(m_DeltaTime);
-	m_ActiveScene->fetchResults(true);
+	m_ActiveScene->GetScene()->simulate(m_DeltaTime);
+	m_ActiveScene->GetScene()->fetchResults(true);
 
+	m_ActiveScene->Update();
 	UpdateFallens();
 
 	uint64_t timeEnd   = m_Elapsed.elapsed();
@@ -174,7 +179,7 @@ void Physics::UpdateFallens()
 void Physics::AddActor(physx::PxRigidActor *actor)
 {
 	m_Actors.push_back(Actor(actor));
-	m_ActiveScene->addActor(*actor);
+	m_ActiveScene->GetScene()->addActor(*actor);
 }
 
 QMatrix4x4 Physics::Actor::GetTransform() const

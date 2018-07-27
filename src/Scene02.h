@@ -17,8 +17,14 @@ class Scene02 : public SceneBase
 {
 	private:
 
+	Q_OBJECT
+
+	static const uint SPHERES_COUNT = 50;
+
 	static const physx::PxVec3 VERTICES[];
 	static const physx::PxU32 INDICES[];
+
+	QLinkedList<physx::PxRigidDynamic*> m_Spheres;
 
 	public:
 
@@ -28,6 +34,7 @@ class Scene02 : public SceneBase
 	private: // SceneBase implementation
 
 	virtual void OnInitialize();
+	virtual void OnUpdate();
 };
 
 #endif // SCENE02_H

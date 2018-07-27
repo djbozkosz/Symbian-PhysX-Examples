@@ -9,6 +9,7 @@ class ISceneProvider
 
 	virtual void Initialize() = 0;
 	virtual void Deinitialize() = 0;
+	virtual void Update() = 0;
 };
 
 #endif // ISCENEPROVIDER_H

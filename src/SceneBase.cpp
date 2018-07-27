@@ -20,7 +20,7 @@ void SceneBase::Initialize()
 	sceneDescriptor.filterShader  = &physx::PxDefaultSimulationFilterShader;
 
 	m_Scene = m_Physics->GetPhysics()->createScene(sceneDescriptor);
-	m_Physics->SetActiveScene(m_Scene);
+	m_Physics->SetActiveScene(this);
 
 	m_DefaultMaterial = m_Physics->GetPhysics()->createMaterial(0.5f, 0.5f, 0.5f);
 
@@ -37,10 +37,24 @@ void SceneBase::Deinitialize()
 	m_Scene->release();
 }
 
+void SceneBase::Update()
+{
+	OnUpdate();
+}
+
+physx::PxScene* SceneBase::GetScene() const
+{
+	return m_Scene;
+}
+
 void SceneBase::OnInitialize()
 {
 }
 
 void SceneBase::OnDeinitialize()
+{
+}
+
+void SceneBase::OnUpdate()
 {
 }

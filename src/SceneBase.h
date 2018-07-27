@@ -8,7 +8,7 @@
 #include "Physics.h"
 #include "ISceneProvider.h"
 
-class SceneBase : public QObject, public ISceneProvider
+class SceneBase : public QObject, public IPhysicsSceneProvider
 {
 	private:
 
@@ -29,11 +29,15 @@ class SceneBase : public QObject, public ISceneProvider
 
 	virtual void Initialize();
 	virtual void Deinitialize();
+	virtual void Update();
+
+	virtual physx::PxScene* GetScene() const;
 
 	protected:
 
 	virtual void OnInitialize();
 	virtual void OnDeinitialize();
+	virtual void OnUpdate();
 };
 
 #endif // SCENEBASE_H
