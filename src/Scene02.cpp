@@ -2,11 +2,11 @@
 
 const physx::PxVec3 Scene02::VERTICES[] =
 {
-	physx::PxVec3(-50.0f,   0.0f, -50.0f),
-	physx::PxVec3( 50.0f,   0.0f, -50.0f),
-	physx::PxVec3(-50.0f,   0.0f,  50.0f),
-	physx::PxVec3( 50.0f,   0.0f,  50.0f),
-	physx::PxVec3(  0.0f, -10.0f,   0.0f)
+	physx::PxVec3(-50.0f, 20.0f, -50.0f),
+	physx::PxVec3( 50.0f, 20.0f, -50.0f),
+	physx::PxVec3(-50.0f, 20.0f,  50.0f),
+	physx::PxVec3( 50.0f, 20.0f,  50.0f),
+	physx::PxVec3(  0.0f,  0.0f,   0.0f)
 };
 
 const physx::PxU32 Scene02::INDICES[] =
@@ -20,6 +20,14 @@ const physx::PxU32 Scene02::INDICES[] =
 Scene02::Scene02(Physics* physics, QObject* parent) :
 	SceneBase(physics, parent)
 {
+}
+
+Scene02::~Scene02()
+{
+}
+
+void Scene02::OnInitialize()
+{
 	physx::PxTriangleMeshDesc meshDescriptor;
 	meshDescriptor.points.count     = 5;
 	meshDescriptor.points.stride    = sizeof(physx::PxVec3);
@@ -29,10 +37,7 @@ Scene02::Scene02(Physics* physics, QObject* parent) :
 	meshDescriptor.triangles.data   = INDICES;
 
 	physx::PxDefaultMemoryOutputStream outStream;
-	if(m_Physics->GetCooking()->cookTriangleMesh(meshDescriptor, outStream) == false)
-	{
-		qDebug() << "Cannot cook mesh!";
-	}
+	m_Physics->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);
 
 	physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
 	physx::PxTriangleMesh* mesh = m_Physics->GetPhysics()->createTriangleMesh(inStream);
@@ -45,20 +50,15 @@ Scene02::Scene02(Physics* physics, QObject* parent) :
 
 	m_Physics->AddMesh(meshStatic, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
-	physx::PxRigidDynamic* sphere = physx::PxCreateDynamic(
-		*m_Physics->GetPhysics(),
-		physx::PxTransform(physx::PxVec3(5.0f, 10.0f, 5.0f)),
-		physx::PxSphereGeometry(1.5f),
-		*m_DefaultMaterial,
-		10.0f);
+	for(int idx = 0; idx < 10; idx++)
+	{
+		physx::PxRigidDynamic* sphere = physx::PxCreateDynamic(
+			*m_Physics->GetPhysics(),
+			physx::PxTransform(physx::PxVec3((float)(rand() % 1000) * 0.04f - 20.0f, 20.0f, (float)(rand() % 1000) * 0.04f - 20.0f)),
+			physx::PxSphereGeometry(0.5f),
+			*m_DefaultMaterial,
+			10.0f);
 
-	m_Physics->AddSpere(sphere, QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
-}
-
-Scene02::~Scene02()
-{
-}
-
-void Scene02::OnInitialize()
-{
+		m_Physics->AddSpere(sphere, QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
+	}
 }
