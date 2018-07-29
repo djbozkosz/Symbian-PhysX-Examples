@@ -43,14 +43,16 @@ FORMS += \
 win32 {
 	CONFIG(release, debug|release) {
 		DEFINES += NDEBUG
+		LIBDIR   = lib/release
 	} else {
 		DEFINES += _DEBUG
+		LIBDIR   = lib/debug
 	}
 
 	DEFINES += PX_FOUNDATION_STATIC_LIB PX_PHYSX_STATIC_LIB
 
-	LIBS_PATH_PHYSX    = ../src/PhysX/PhysX_3.4/Source/compiler/make_win32/lib
-	LIBS_PATH_PXSHARED = ../src/PhysX/PxShared/src/compiler/make_win32/lib
+	LIBS_PATH_PHYSX    = ../src/PhysX/PhysX_3.4/Source/compiler/make_win32/$${LIBDIR}
+	LIBS_PATH_PXSHARED = ../src/PhysX/PxShared/src/compiler/make_win32/$${LIBDIR}
 
 	LIBS += \
 		$${LIBS_PATH_PHYSX}/PhysXVehicle.a \
