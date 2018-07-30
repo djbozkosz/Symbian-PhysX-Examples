@@ -16,7 +16,7 @@ void SceneBase::Initialize()
 {
 	physx::PxSceneDesc sceneDescriptor(m_Physics->GetPhysics()->getTolerancesScale());
 	sceneDescriptor.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-	sceneDescriptor.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
+	sceneDescriptor.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(0);
 	sceneDescriptor.filterShader  = &physx::PxDefaultSimulationFilterShader;
 
 	m_Scene = m_Physics->GetPhysics()->createScene(sceneDescriptor);
