@@ -34,6 +34,7 @@ class Scene02 : public SceneBase
 	private: // SceneBase implementation
 
 	virtual void OnInitialize();
+	virtual void OnDeinitialize();
 	virtual void OnUpdate();
 };
 

@@ -44,30 +44,17 @@ void Scene02::OnInitialize()
 	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
 	meshDescriptor.triangles.data   = INDICES;
 
-	physx::PxDefaultMemoryOutputStream outStream;
-	if(m_Physics->GetCooking()->cookTriangleMesh(meshDescriptor, outStream) == false)
-	{
-		qDebug() << "cannot cook mesh";
-	}
+	physx::PxDefaultMemoryOutputStream outStream(*m_Physics->GetAllocator());
+	m_Physics->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);
 
 	physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
 	physx::PxTriangleMesh* mesh = m_Physics->GetPhysics()->createTriangleMesh(inStream);
-
-	if(mesh == NULL)
-	{
-		qDebug() << "cannot create mesh";
-	}
 
 	physx::PxRigidStatic* meshStatic = physx::PxCreateStatic(
 		*m_Physics->GetPhysics(),
 		physx::PxTransform(physx::PxVec3(0.0f, 0.0f, 0.0f)),
 		physx::PxTriangleMeshGeometry(mesh),
 		*m_DefaultMaterial);
-
-	if(meshStatic == NULL)
-	{
-		qDebug() << "cannot create static mesh";
-	}
 
 	m_Physics->AddMesh(meshStatic, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
@@ -85,6 +72,11 @@ void Scene02::OnInitialize()
 
 		m_Physics->AddSpere(m_Spheres.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
 	}
+}
+
+void Scene02::OnDeinitialize()
+{
+	m_Spheres.clear();
 }
 
 void Scene02::OnUpdate()
