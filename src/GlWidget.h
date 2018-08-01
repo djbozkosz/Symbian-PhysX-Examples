@@ -223,6 +223,7 @@ class GlWidget : public QGLWidget
 
 	void StatsUpdated_SceneIdx(uint sceneIdx);
 	void StatsUpdated_RenderMs(float renderMs);
+	void StatsUpdated_RenderSec(float renderMs);
 
 	private:
 

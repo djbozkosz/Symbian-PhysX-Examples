@@ -244,7 +244,11 @@ void GlWidget::paintGL()
 	glUseProgram(m_DepthShaderProgram);
 
 	glEnable(GL_POLYGON_OFFSET_FILL);
+#ifdef Q_OS_SYMBIAN
 	glPolygonOffset(1.0f, 1.0f);
+#else
+	glPolygonOffset(1.5f, 10.0f);
+#endif
 
 	GLuint lastVertices = 0;
 	GLuint lastIndices  = 0;
@@ -372,9 +376,12 @@ void GlWidget::paintGL()
 
 	glUseProgram(0);
 
-	uint64_t timeEnd = m_Elapsed.elapsed();
-	m_ElapsedTime += (timeEnd - timeStart);
+	uint64_t timeEnd   = m_Elapsed.elapsed();
+	uint64_t deltaTime = timeEnd - timeStart;
+	m_ElapsedTime += deltaTime;
 	m_FrameCounter++;
+
+	emit StatsUpdated_RenderSec(deltaTime * 0.001f);
 
 	if(m_ElapsedTime > 1000)
 	{
