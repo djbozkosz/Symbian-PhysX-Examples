@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 	Scene02    sample02(&physics);
 
 	GlWidget *glWidget = mainWindow.GetGlWidget();
+	QObject::connect(glWidget, SIGNAL(StatsUpdated_RenderSec(float)), &physics, SLOT(SetAdditionalDelta(float)));
 	QObject::connect(&physics, SIGNAL(Simulated()), glWidget, SLOT(update()));
 	QObject::connect(&physics, SIGNAL(ActorBoxAdded   (const ISceneObjectProvider*, QVector4D, QVector2D)), glWidget, SLOT(AddBox(const ISceneObjectProvider*,   QVector4D, QVector2D)));
 	QObject::connect(&physics, SIGNAL(ActorSphereAdded(const ISceneObjectProvider*, QVector4D, QVector2D)), glWidget, SLOT(AddSpere(const ISceneObjectProvider*, QVector4D, QVector2D)));

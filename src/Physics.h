@@ -82,6 +82,7 @@ class Physics : public QObject
 	QTimer                 m_Timer;
 	QElapsedTimer          m_Elapsed;
 	float                  m_DeltaTime;
+	float                  m_AdditionalDelta;
 
 	uint64_t               m_ElapsedTime;
 	uint                   m_FrameCounter;
@@ -94,8 +95,9 @@ class Physics : public QObject
 	explicit Physics(QObject *parent = NULL);
 	virtual ~Physics();
 
-	inline physx::PxPhysics* GetPhysics() const { return m_Physics; }
-	inline physx::PxCooking* GetCooking() const { return m_Cooking; }
+	inline physx::PxPhysics*           GetPhysics()   const { return m_Physics;            }
+	inline physx::PxCooking*           GetCooking()   const { return m_Cooking;            }
+	inline physx::PxAllocatorCallback* GetAllocator()       { return &m_AllocatorCallback; }
 	inline void SetActiveScene(IPhysicsSceneProvider* scene) { m_ActiveScene = scene; }
 
 	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
@@ -106,7 +108,8 @@ class Physics : public QObject
 
 	public slots:
 
-	virtual void Initialize();
+	void Initialize();
+	void SetAdditionalDelta(float delta);
 
 	signals:
 

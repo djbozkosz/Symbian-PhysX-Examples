@@ -3,6 +3,11 @@
 const float Physics::DELTA_MIN = 1.0f / 60.0f;
 const float Physics::DELTA_MAX = 1.0f / 5.0f;
 
+/*void Aaa(int a, int b)
+{
+	qDebug() << a << b;
+}*/
+
 void ErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line)
 {
 	qDebug() << code << message << file << line;
@@ -44,6 +49,7 @@ Physics::Physics(QObject *parent) :
 	m_Cooking(NULL),
 	m_ActiveScene(NULL),
 	m_DeltaTime(DELTA_MIN),
+	m_AdditionalDelta(0.0f),
 	m_ElapsedTime(0UL),
 	m_FrameCounter(0)
 {
@@ -73,6 +79,11 @@ void Physics::Initialize()
 	connect(&m_Timer, SIGNAL(timeout()), this, SLOT(Simulate()));
 	m_Timer.start();
 	m_Elapsed.start();
+}
+
+void Physics::SetAdditionalDelta(float delta)
+{
+	m_AdditionalDelta = delta;
 }
 
 void Physics::AddBox(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
@@ -110,7 +121,7 @@ void Physics::Simulate()
 
 	uint64_t timeStart = m_Elapsed.elapsed();
 
-	m_ActiveScene->GetScene()->simulate(m_DeltaTime);
+	m_ActiveScene->GetScene()->simulate(m_DeltaTime + m_AdditionalDelta);
 	m_ActiveScene->GetScene()->fetchResults(true);
 
 	m_ActiveScene->Update();
