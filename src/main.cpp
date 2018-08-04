@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
 
 	MainWindow mainWindow(splash, 2000);
 	Physics    physics;
-	Scene00    sample00(&physics);
-	Scene01    sample01(&physics);
+	/*Scene00    sample00(&physics);
+	Scene01    sample01(&physics);*/
 	Scene02    sample02(&physics);
 
 	GlWidget *glWidget = mainWindow.GetGlWidget();
@@ -49,8 +49,8 @@ int main(int argc, char *argv[])
 
 	// delayed main window show in Initialize()
 
-	glWidget->AddScene(&sample00);
-	glWidget->AddScene(&sample01);
+	/*glWidget->AddScene(&sample00);
+	glWidget->AddScene(&sample01);*/
 	glWidget->AddScene(&sample02);
 
 	return application.exec();

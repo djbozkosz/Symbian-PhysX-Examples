@@ -3,10 +3,10 @@
 const float Physics::DELTA_MIN = 1.0f / 60.0f;
 const float Physics::DELTA_MAX = 1.0f / 5.0f;
 
-/*void Aaa(int a, int b)
+void Aaa(const char* a)
 {
-	qDebug() << a << b;
-}*/
+	//qDebug() << a;
+}
 
 void ErrorCallback::reportError(physx::PxErrorCode::Enum code, const char* message, const char* file, int line)
 {
@@ -180,9 +180,11 @@ void Physics::UpdateFallens()
 			if(transform.p.y > -10.0f)
 				continue;
 
-			transform.p = physx::PxVec3(0.0f, 50.0f, 0.0f);
+			transform.p = physx::PxVec3((float)(rand() % 1000) * 0.002f - 1.0f, 4.0f, (float)(rand() % 1000) * 0.002f - 1.0f);
 			dynamicActor->setGlobalPose(transform);
 			dynamicActor->setLinearVelocity(physx::PxVec3(physx::PxZero));
+
+			qDebug() << transform.p.x << transform.p.y << transform.p.z;
 		}
 	}
 }

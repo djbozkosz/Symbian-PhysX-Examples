@@ -28,13 +28,13 @@ Scene02::~Scene02()
 
 void Scene02::OnInitialize()
 {
-	physx::PxRigidStatic* plane = physx::PxCreateStatic(
+	/*physx::PxRigidStatic* plane = physx::PxCreateStatic(
 		*m_Physics->GetPhysics(),
 		physx::PxTransform(physx::PxVec3(0.0f, -0.5f, 0.0f)),
 		physx::PxBoxGeometry(50.0f, 0.5f, 50.0f),
 		*m_DefaultMaterial);
 
-	m_Physics->AddBox(plane, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
+	m_Physics->AddBox(plane, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));*/
 
 	physx::PxTriangleMeshDesc meshDescriptor;
 	meshDescriptor.points.count     = 5;
@@ -58,22 +58,23 @@ void Scene02::OnInitialize()
 
 	m_Physics->AddMesh(meshStatic, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
-	for(uint idx = 0; idx < SPHERES_COUNT; idx++)
+	for(uint idx = 0; idx < 1; idx++)
 	{
 		m_Spheres.push_back(physx::PxCreateDynamic(
 			*m_Physics->GetPhysics(),
 			physx::PxTransform(physx::PxVec3(
-				(float)(rand() % 1000) * 0.04f - 20.0f,
+				/*(float)(rand() % 1000) * 0.04f - 20.0f,
 				(float)(rand() % 1000) * 0.03f + 10.0f,
-				(float)(rand() % 1000) * 0.04f - 20.0f)),
-			physx::PxSphereGeometry(0.5f),
+				(float)(rand() % 1000) * 0.04f - 20.0f)),*/
+				10.0f, 10.0f, 10.0f)),
+			physx::PxSphereGeometry(1.0f),
 			*m_DefaultMaterial,
 			10.0f));
 
 		m_Physics->AddSpere(m_Spheres.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
 	}
 
-	for(uint idx = 0; idx < SPHERES_COUNT / 5; idx++)
+	/*for(uint idx = 0; idx < SPHERES_COUNT / 5; idx++)
 	{
 		m_Spheres.push_back(physx::PxCreateDynamic(
 			*m_Physics->GetPhysics(),
@@ -86,7 +87,7 @@ void Scene02::OnInitialize()
 			10.0f));
 
 		m_Physics->AddBox(m_Spheres.back(), QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
-	}
+	}*/
 }
 
 void Scene02::OnDeinitialize()
@@ -96,7 +97,7 @@ void Scene02::OnDeinitialize()
 
 void Scene02::OnUpdate()
 {
-	foreach(sphere, m_Spheres)
+	/*foreach(sphere, m_Spheres)
 	{
 		physx::PxRigidDynamic* sphereDynamic = *sphere;
 		const physx::PxVec3 position = sphereDynamic->getGlobalPose().p;
@@ -105,5 +106,5 @@ void Scene02::OnUpdate()
 			continue;
 
 		sphereDynamic->setLinearVelocity(sphereDynamic->getLinearVelocity() + physx::PxVec3(0.0f, 15.0f, 0.0f));
-	}
+	}*/
 }
