@@ -20,6 +20,7 @@ class Scene02 : public SceneBase
 	Q_OBJECT
 
 	static const uint SPHERES_COUNT = 50;
+	static const uint BOXES_COUNT   = 50;
 
 	static const physx::PxVec3 VERTICES[];
 	static const physx::PxU32 INDICES[];
