@@ -1,9 +1,10 @@
 #ifndef SCENEBASE_H
 #define SCENEBASE_H
 
-#include "common/PxTolerancesScale.h"
-#include "extensions/PxDefaultCpuDispatcher.h"
-#include "extensions/PxDefaultSimulationFilterShader.h"
+#include <PxMaterial.h>
+#include <common/PxTolerancesScale.h>
+#include <extensions/PxDefaultCpuDispatcher.h>
+#include <extensions/PxDefaultSimulationFilterShader.h>
 
 #include "Physics.h"
 #include "ISceneProvider.h"
