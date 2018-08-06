@@ -45,9 +45,9 @@ void Scene01::OnInitialize()
 
 void Scene01::SetupWall(QVector3D position)
 {
-	for(uint idxVertical = 0; idxVertical < BOXES_COUNT_VERTICAL; idxVertical++)
+	for (uint idxVertical = 0; idxVertical < BOXES_COUNT_VERTICAL; idxVertical++)
 	{
-		for(uint idxHorizontal = 0; idxHorizontal < BOXES_COUNT_HORIZONTAL; idxHorizontal++)
+		for (uint idxHorizontal = 0; idxHorizontal < BOXES_COUNT_HORIZONTAL; idxHorizontal++)
 		{
 			physx::PxRigidDynamic* box = physx::PxCreateDynamic(
 				*PhysicsEngine->GetPhysics(),

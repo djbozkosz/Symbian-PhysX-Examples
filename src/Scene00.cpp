@@ -19,7 +19,7 @@ void Scene00::OnInitialize()
 
 	PhysicsEngine->AddBox(plane, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
-	for(uint idx = 0; idx < BOXES_COUNT; idx++)
+	for (uint idx = 0; idx < BOXES_COUNT; idx++)
 	{
 		physx::PxRigidDynamic* box = physx::PxCreateDynamic(
 			*PhysicsEngine->GetPhysics(),

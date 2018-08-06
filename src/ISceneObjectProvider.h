@@ -8,7 +8,7 @@
 #include <QVector>
 
 #undef foreach
-#define foreach(it, list) for(auto it = list.begin(); it != list.end(); it++)
+#define foreach(it, list) for (auto it = list.begin(); it != list.end(); it++)
 
 class ISceneObjectProvider
 {

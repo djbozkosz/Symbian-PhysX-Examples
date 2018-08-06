@@ -101,7 +101,7 @@ void Physics::AddMesh(Actor* actor, const QVector4D& color, const QVector2D& til
 
 void Physics::CleanActors()
 {
-	foreach(actor, m_Actors)
+	foreach (actor, m_Actors)
 	{
 		(*actor)->RigidActor->release();
 		delete *actor;
@@ -112,7 +112,7 @@ void Physics::CleanActors()
 
 void Physics::Simulate()
 {
-	if(m_ActiveScene == NULL)
+	if (m_ActiveScene == NULL)
 		return;
 
 	uint64_t timeStart = m_Elapsed.elapsed();
@@ -129,16 +129,16 @@ void Physics::Simulate()
 	m_ElapsedTime     += timeDelta;
 	m_FrameCounter++;
 
-	if(m_DeltaTime < DELTA_MIN)
+	if (m_DeltaTime < DELTA_MIN)
 	{
 		m_DeltaTime = DELTA_MIN;
 	}
-	else if(m_DeltaTime > DELTA_MAX)
+	else if (m_DeltaTime > DELTA_MAX)
 	{
 		m_DeltaTime = DELTA_MAX;
 	}
 
-	if(m_ElapsedTime > 1000)
+	if (m_ElapsedTime > 1000)
 	{
 		emit StatsUpdated_SimulateMs(m_ElapsedTime / m_FrameCounter);
 
@@ -147,11 +147,11 @@ void Physics::Simulate()
 
 		uint awakeActors = 0;
 
-		foreach(actor, m_Actors)
+		foreach (actor, m_Actors)
 		{
 			physx::PxRigidDynamic* dynamicActor = (*actor)->RigidActor->is<physx::PxRigidDynamic>();
 
-			if(dynamicActor != NULL && dynamicActor->isSleeping() == false)
+			if (dynamicActor != NULL && dynamicActor->isSleeping() == false)
 			{
 				awakeActors++;
 			}
@@ -165,15 +165,15 @@ void Physics::Simulate()
 
 void Physics::UpdateFallens()
 {
-	foreach(actor, m_Actors)
+	foreach (actor, m_Actors)
 	{
 		physx::PxRigidDynamic* dynamicActor = (*actor)->RigidActor->is<physx::PxRigidDynamic>();
 
-		if(dynamicActor != NULL && dynamicActor->isSleeping() == false)
+		if (dynamicActor != NULL && dynamicActor->isSleeping() == false)
 		{
 			physx::PxTransform transform = dynamicActor->getGlobalPose();
 
-			if(transform.p.y > -10.0f)
+			if (transform.p.y > -10.0f)
 				continue;
 
 			transform.p = physx::PxVec3(0.0f, 50.0f, 0.0f);
@@ -198,16 +198,16 @@ QMatrix4x4 Physics::Actor::GetTransform() const
 	transform.rotate(QQuaternion(pxTransform.q.w, pxTransform.q.x, pxTransform.q.y, pxTransform.q.z));
 
 	physx::PxShape *shapes[1];
-	if(RigidActor->getShapes(shapes, 1) > 0)
+	if (RigidActor->getShapes(shapes, 1) > 0)
 	{
-		if(shapes[0]->getGeometryType() == physx::PxGeometryType::eBOX)
+		if (shapes[0]->getGeometryType() == physx::PxGeometryType::eBOX)
 		{
 			physx::PxBoxGeometry box;
 			shapes[0]->getBoxGeometry(box);
 
 			transform.scale(box.halfExtents.x * 2.0f, box.halfExtents.y * 2.0f, box.halfExtents.z * 2.0f);
 		}
-		else if(shapes[0]->getGeometryType() == physx::PxGeometryType::eSPHERE)
+		else if (shapes[0]->getGeometryType() == physx::PxGeometryType::eSPHERE)
 		{
 			physx::PxSphereGeometry sphere;
 			shapes[0]->getSphereGeometry(sphere);

@@ -25,7 +25,7 @@ Scene02::Scene02(Physics* physics, QObject* parent) :
 	const float radAngleStep = 1.0f / Scene02::FUNNEL_VERTICES_COUNT * 6.283185307179586476925286766559f;
 	float radAngle           = 0.0f;
 
-	for(uint idx = 0; idx < Scene02::FUNNEL_VERTICES_COUNT; idx++, radAngle += radAngleStep)
+	for (uint idx = 0; idx < Scene02::FUNNEL_VERTICES_COUNT; idx++, radAngle += radAngleStep)
 	{
 		float angleSin = sinf(radAngle);
 		float angleCos = cosf(radAngle);
@@ -100,7 +100,7 @@ void Scene02::OnInitialize()
 
 	PhysicsEngine->AddMesh(new Funnel(meshStatic), QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
-	for(uint idx = 0; idx < SPHERES_COUNT; idx++)
+	for (uint idx = 0; idx < SPHERES_COUNT; idx++)
 	{
 		m_Objects.push_back(physx::PxCreateDynamic(
 			*PhysicsEngine->GetPhysics(),
@@ -115,7 +115,7 @@ void Scene02::OnInitialize()
 		PhysicsEngine->AddSpere(m_Objects.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
 	}
 
-	for(uint idx = 0; idx < BOXES_COUNT; idx++)
+	for (uint idx = 0; idx < BOXES_COUNT; idx++)
 	{
 		m_Objects.push_back(physx::PxCreateDynamic(
 			*PhysicsEngine->GetPhysics(),
@@ -139,12 +139,12 @@ void Scene02::OnDeinitialize()
 
 void Scene02::OnUpdate()
 {
-	foreach(sphere, m_Objects)
+	foreach (sphere, m_Objects)
 	{
 		physx::PxRigidDynamic* sphereDynamic = *sphere;
 		const physx::PxVec3 position = sphereDynamic->getGlobalPose().p;
 
-		if(sqrtf(position.x * position.x + position.y * position.y + position.z * position.z) > 2.0f)
+		if (sqrtf(position.x * position.x + position.y * position.y + position.z * position.z) > 2.0f)
 			continue;
 
 		sphereDynamic->setLinearVelocity(sphereDynamic->getLinearVelocity() + physx::PxVec3(0.0f, 15.0f, 0.0f));

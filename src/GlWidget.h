@@ -258,7 +258,7 @@ inline QVector<float> GlWidget::Matrix4x4ToFloat(const QMatrix4x4 &mat)
 	memcpy(&out[0], mat.constData(), sizeof(float) * 16);
 #else
 	const double *inDouble = mat.constData();
-	for(uchar i = 0; i < 16; i++)
+	for (uchar i = 0; i < 16; i++)
 		out[i] = static_cast<float>(inDouble[i]);
 #endif
 
@@ -273,7 +273,7 @@ inline QVector<float> GlWidget::Matrix3x3ToFloat(const QMatrix3x3 &mat)
 	memcpy(&out[0], mat.constData(), sizeof(float) * 9);
 #else
 	const double *inDouble = mat.constData();
-	for(uchar i = 0; i < 9; i++)
+	for (uchar i = 0; i < 9; i++)
 		out[i] = static_cast<float>(inDouble[i]);
 #endif
 

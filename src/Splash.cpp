@@ -17,7 +17,7 @@ Splash::~Splash()
 
 bool Splash::eventFilter(QObject *watched, QEvent *event)
 {
-	if((watched == this) && ((event->type() == QEvent::MouseButtonPress) || (event->type() == QEvent::MouseButtonRelease)))
+	if ((watched == this) && ((event->type() == QEvent::MouseButtonPress) || (event->type() == QEvent::MouseButtonRelease)))
 		return true;
 	else
 		return QObject::eventFilter(watched, event);
@@ -29,7 +29,7 @@ void Splash::paintEvent(QPaintEvent *e)
 
 	QPainter p(this);
 
-	if(m_Logo.isNull() == true)
+	if (m_Logo.isNull() == true)
 	{
 		m_Logo = QPixmap(":/images/logo.png");
 	}

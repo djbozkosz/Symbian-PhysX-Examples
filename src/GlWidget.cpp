@@ -41,7 +41,7 @@ GlWidget::GlWidget(/*QSplashScreen *splash, uint splashDelayMs, */QWidget* paren
 
 GlWidget::~GlWidget()
 {
-	foreach(vertexBuffer, m_VertexBuffers)
+	foreach (vertexBuffer, m_VertexBuffers)
 	{
 		glDeleteBuffers(1, &(*vertexBuffer));
 	}
@@ -203,7 +203,7 @@ void GlWidget::initializeGL()
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_ShadowDepth);
 
 	GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if(fboStatus != GL_FRAMEBUFFER_COMPLETE)
+	if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
 	{
 		qDebug() << "Framebuffer creation error:" << fboStatus;
 	}
@@ -214,7 +214,7 @@ void GlWidget::initializeGL()
 
 	emit Initialized();
 
-	if(m_Scenes.size() > m_ActiveSceneIdx && m_Scenes[m_ActiveSceneIdx] != NULL)
+	if (m_Scenes.size() > m_ActiveSceneIdx && m_Scenes[m_ActiveSceneIdx] != NULL)
 	{
 		m_Scenes[m_ActiveSceneIdx]->Initialize();
 	}
@@ -253,13 +253,13 @@ void GlWidget::paintGL()
 	GLuint lastVertices = 0;
 	GLuint lastIndices  = 0;
 
-	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
+	for (int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
 		RenderObject* object = &m_RenderObjects[idx];
 
-		if(lastVertices != object->Vertices || lastIndices != object->Indices)
+		if (lastVertices != object->Vertices || lastIndices != object->Indices)
 		{
-			if(idx > 0)
+			if (idx > 0)
 			{
 				glDisableVertexAttribArray(m_DepthAttributePosition);
 			}
@@ -282,7 +282,7 @@ void GlWidget::paintGL()
 		lastIndices  = object->Indices;
 	}
 
-	if(m_RenderObjects.size() > 0)
+	if (m_RenderObjects.size() > 0)
 	{
 		glDisableVertexAttribArray(m_DepthAttributePosition);
 
@@ -316,13 +316,13 @@ void GlWidget::paintGL()
 	lastVertices = 0;
 	lastIndices  = 0;
 
-	for(int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
+	for (int idx = 0, count = m_RenderObjects.size(); idx < count; idx++)
 	{
 		const RenderObject* object = &m_RenderObjects[idx];
 
-		if(lastVertices != object->Vertices || lastIndices != object->Indices)
+		if (lastVertices != object->Vertices || lastIndices != object->Indices)
 		{
-			if(idx > 0)
+			if (idx > 0)
 			{
 				glDisableVertexAttribArray(m_IlluminationAttributePosition);
 				glDisableVertexAttribArray(m_IlluminationAttributeNormal);
@@ -358,7 +358,7 @@ void GlWidget::paintGL()
 		lastIndices  = object->Indices;
 	}
 
-	if(m_RenderObjects.size() > 0)
+	if (m_RenderObjects.size() > 0)
 	{
 		glDisableVertexAttribArray(m_IlluminationAttributePosition);
 		glDisableVertexAttribArray(m_IlluminationAttributeNormal);
@@ -383,7 +383,7 @@ void GlWidget::paintGL()
 
 	emit StatsUpdated_RenderSec(deltaTime * 0.001f);
 
-	if(m_ElapsedTime > 1000)
+	if (m_ElapsedTime > 1000)
 	{
 		emit StatsUpdated_RenderMs(m_ElapsedTime / m_FrameCounter);
 
@@ -447,7 +447,7 @@ void GlWidget::ActivatePrevScene()
 	m_RenderObjects.clear();
 
 	m_ActiveSceneIdx--;
-	if(m_ActiveSceneIdx < 0)
+	if (m_ActiveSceneIdx < 0)
 	{
 		m_ActiveSceneIdx = m_Scenes.size() - 1;
 	}
@@ -463,7 +463,7 @@ void GlWidget::ActivateNextScene()
 	m_RenderObjects.clear();
 
 	m_ActiveSceneIdx++;
-	if(m_ActiveSceneIdx >= m_Scenes.size())
+	if (m_ActiveSceneIdx >= m_Scenes.size())
 	{
 		m_ActiveSceneIdx = 0;
 	}
@@ -485,13 +485,13 @@ GLuint GlWidget::CreateShader(const char *shaderText, GLenum type)
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLength);
 
-	if(infoLength > 0)
+	if (infoLength > 0)
 	{
 		log = new char[infoLength + 0];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, log);
 		log[infoLength] = 0;
 
-		if(log[0] != 0)
+		if (log[0] != 0)
 		{
 			qDebug() << log << "\n";
 		}
@@ -514,13 +514,13 @@ GLuint GlWidget::CreateProgram(GLuint vertexShader, GLuint fragmentShader)
 	glGetProgramiv(program, GL_LINK_STATUS, &status);
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLength);
 
-	if(infoLength > 0)
+	if (infoLength > 0)
 	{
 		log = new char[infoLength + 0];
 		glGetProgramInfoLog(program, infoLength, &infoLength, log);
 		log[infoLength] = 0;
 
-		if(log[0] != 0)
+		if (log[0] != 0)
 		{
 			qDebug() << log << "\n";
 		}
