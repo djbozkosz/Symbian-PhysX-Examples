@@ -2,9 +2,9 @@
 
 SceneBase::SceneBase(Physics* physics, QObject* parent) :
 	QObject(parent),
-	m_Physics(physics),
-	m_Scene(NULL),
-	m_DefaultMaterial(NULL)
+	PhysicsEngine(physics),
+	Scene(NULL),
+	DefaultMaterial(NULL)
 {
 }
 
@@ -14,29 +14,29 @@ SceneBase::~SceneBase()
 
 void SceneBase::Initialize()
 {
-	physx::PxSceneDesc sceneDescriptor(m_Physics->GetPhysics()->getTolerancesScale());
+	physx::PxSceneDesc sceneDescriptor(PhysicsEngine->GetPhysics()->getTolerancesScale());
 	sceneDescriptor.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDescriptor.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(0);
 	sceneDescriptor.filterShader  = &physx::PxDefaultSimulationFilterShader;
 
-	m_Scene = m_Physics->GetPhysics()->createScene(sceneDescriptor);
-	m_Physics->SetActiveScene(this);
+	Scene = PhysicsEngine->GetPhysics()->createScene(sceneDescriptor);
+	PhysicsEngine->SetActiveScene(this);
 
-	m_DefaultMaterial = m_Physics->GetPhysics()->createMaterial(0.5f, 0.5f, 0.5f);
+	DefaultMaterial = PhysicsEngine->GetPhysics()->createMaterial(0.5f, 0.5f, 0.5f);
 
 	OnInitialize();
 }
 
 void SceneBase::Deinitialize()
 {
-	m_Physics->SetActiveScene(NULL);
+	PhysicsEngine->SetActiveScene(NULL);
 
 	OnDeinitialize();
 
-	m_DefaultMaterial->release();
+	DefaultMaterial->release();
 
-	m_Physics->CleanActors();
-	m_Scene->release();
+	PhysicsEngine->CleanActors();
+	Scene->release();
 }
 
 void SceneBase::Update()
@@ -46,7 +46,7 @@ void SceneBase::Update()
 
 physx::PxScene* SceneBase::GetScene() const
 {
-	return m_Scene;
+	return Scene;
 }
 
 void SceneBase::OnInitialize()

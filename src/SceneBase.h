@@ -17,9 +17,9 @@ class SceneBase : public QObject, public IPhysicsSceneProvider
 
 	protected:
 
-	Physics*           m_Physics;
-	physx::PxScene*    m_Scene;
-	physx::PxMaterial* m_DefaultMaterial;
+	Physics*           PhysicsEngine;
+	physx::PxScene*    Scene;
+	physx::PxMaterial* DefaultMaterial;
 
 	public:
 

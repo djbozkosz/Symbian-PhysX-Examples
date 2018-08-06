@@ -76,7 +76,7 @@ Scene02::~Scene02()
 
 void Scene02::OnInitialize()
 {
-	m_BoxMaterial = m_Physics->GetPhysics()->createMaterial(0.5f, 0.001f, 1.0f);
+	m_BoxMaterial = PhysicsEngine->GetPhysics()->createMaterial(0.5f, 0.001f, 1.0f);
 
 	physx::PxTriangleMeshDesc meshDescriptor;
 	meshDescriptor.points.count     = Scene02::FUNNEL_VERTICES_COUNT + 1;
@@ -86,39 +86,39 @@ void Scene02::OnInitialize()
 	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
 	meshDescriptor.triangles.data   = FUNNEL_PX_INDICES;
 
-	physx::PxDefaultMemoryOutputStream outStream(*m_Physics->GetAllocator());
-	m_Physics->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);
+	physx::PxDefaultMemoryOutputStream outStream(*PhysicsEngine->GetAllocator());
+	PhysicsEngine->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);
 
 	physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
-	physx::PxTriangleMesh* mesh = m_Physics->GetPhysics()->createTriangleMesh(inStream);
+	physx::PxTriangleMesh* mesh = PhysicsEngine->GetPhysics()->createTriangleMesh(inStream);
 
 	physx::PxRigidStatic* meshStatic = physx::PxCreateStatic(
-		*m_Physics->GetPhysics(),
+		*PhysicsEngine->GetPhysics(),
 		physx::PxTransform(physx::PxVec3(0.0f, 0.0f, 0.0f)),
 		physx::PxTriangleMeshGeometry(mesh),
-		*m_DefaultMaterial);
+		*DefaultMaterial);
 
-	m_Physics->AddMesh(new Funnel(meshStatic), QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
+	PhysicsEngine->AddMesh(new Funnel(meshStatic), QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
 	for(uint idx = 0; idx < SPHERES_COUNT; idx++)
 	{
 		m_Objects.push_back(physx::PxCreateDynamic(
-			*m_Physics->GetPhysics(),
+			*PhysicsEngine->GetPhysics(),
 			physx::PxTransform(physx::PxVec3(
 				(float)(rand() % 1000) * 0.04f - 20.0f,
 				(float)(rand() % 1000) * 0.03f + 10.0f,
 				(float)(rand() % 1000) * 0.04f - 20.0f)),
 			physx::PxSphereGeometry(0.5f),
-			*m_DefaultMaterial,
+			*DefaultMaterial,
 			10.0f));
 
-		m_Physics->AddSpere(m_Objects.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
+		PhysicsEngine->AddSpere(m_Objects.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
 	}
 
 	for(uint idx = 0; idx < BOXES_COUNT; idx++)
 	{
 		m_Objects.push_back(physx::PxCreateDynamic(
-			*m_Physics->GetPhysics(),
+			*PhysicsEngine->GetPhysics(),
 			physx::PxTransform(physx::PxVec3(
 				(float)(rand() % 1000) * 0.04f - 20.0f,
 				(float)(rand() % 1000) * 0.03f + 10.0f,
@@ -127,7 +127,7 @@ void Scene02::OnInitialize()
 			*m_BoxMaterial,
 			0.1f));
 
-		m_Physics->AddBox(m_Objects.back(), QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
+		PhysicsEngine->AddBox(m_Objects.back(), QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
 	}
 }
 
