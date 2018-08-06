@@ -230,9 +230,9 @@ class GlWidget : public QGLWidget
 	GLuint CreateShader(const char* shaderText, GLenum type);
 	GLuint CreateProgram(GLuint vertexShader, GLuint fragmentShader);
 
-	void CreateVertexBuffer(GLuint *vertexBuffer, GLenum type, uint size, const void* data);
-	void CreateVertices(GLuint *vertexBuffer, uint count, const void* data);
-	void CreateIndices(GLuint *vertexBuffer, uint count, const void* data);
+	GLuint CreateVertexBuffer(GLenum type, uint size, const void* data);
+	GLuint CreateVertices(uint count, const void* data);
+	GLuint CreateIndices(uint count, const void* data);
 
 	static QMatrix4x4 ComposeTransformation(const QVector3D &position, const QQuaternion &rotation = QQuaternion(), const QVector3D &scale = QVector3D(1.0f, 1.0f, 1.0f));
 	static QVector<float> Matrix4x4ToFloat(const QMatrix4x4 &mat);

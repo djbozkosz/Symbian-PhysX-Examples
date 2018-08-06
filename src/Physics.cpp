@@ -83,27 +83,28 @@ void Physics::SetAdditionalDelta(float delta)
 
 void Physics::AddBox(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
 {
-	AddActor(actor);
-	emit ActorBoxAdded(&m_Actors.back(), color, tiling);
+	AddActor(new Actor(actor));
+	emit ActorBoxAdded(m_Actors.back(), color, tiling);
 }
 
 void Physics::AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling)
 {
-	AddActor(actor);
-	emit ActorSphereAdded(&m_Actors.back(), color, tiling);
+	AddActor(new Actor(actor));
+	emit ActorSphereAdded(m_Actors.back(), color, tiling);
 }
 
-void Physics::AddMesh(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
+void Physics::AddMesh(Actor* actor, const QVector4D& color, const QVector2D& tiling)
 {
 	AddActor(actor);
-	emit ActorMeshAdded(&m_Actors.back(), color, tiling);
+	emit ActorMeshAdded(m_Actors.back(), color, tiling);
 }
 
 void Physics::CleanActors()
 {
 	foreach(actor, m_Actors)
 	{
-		actor->RigidActor->release();
+		(*actor)->RigidActor->release();
+		delete *actor;
 	}
 
 	m_Actors.clear();
@@ -148,7 +149,7 @@ void Physics::Simulate()
 
 		foreach(actor, m_Actors)
 		{
-			physx::PxRigidDynamic* dynamicActor = actor->RigidActor->is<physx::PxRigidDynamic>();
+			physx::PxRigidDynamic* dynamicActor = (*actor)->RigidActor->is<physx::PxRigidDynamic>();
 
 			if(dynamicActor != NULL && dynamicActor->isSleeping() == false)
 			{
@@ -166,7 +167,7 @@ void Physics::UpdateFallens()
 {
 	foreach(actor, m_Actors)
 	{
-		physx::PxRigidDynamic* dynamicActor = actor->RigidActor->is<physx::PxRigidDynamic>();
+		physx::PxRigidDynamic* dynamicActor = (*actor)->RigidActor->is<physx::PxRigidDynamic>();
 
 		if(dynamicActor != NULL && dynamicActor->isSleeping() == false)
 		{
@@ -182,10 +183,10 @@ void Physics::UpdateFallens()
 	}
 }
 
-void Physics::AddActor(physx::PxRigidActor *actor)
+void Physics::AddActor(Actor *actor)
 {
-	m_Actors.push_back(Actor(actor));
-	m_ActiveScene->GetScene()->addActor(*actor);
+	m_Actors.push_back(actor);
+	m_ActiveScene->GetScene()->addActor(*actor->RigidActor);
 }
 
 QMatrix4x4 Physics::Actor::GetTransform() const
@@ -216,24 +217,4 @@ QMatrix4x4 Physics::Actor::GetTransform() const
 	}
 
 	return transform;
-}
-
-QVector<QVector3D> Physics::Actor::GetMeshPositions() const
-{
-	return QVector<QVector3D>();
-}
-
-QVector<QVector3D> Physics::Actor::GetMeshNormals() const
-{
-	return QVector<QVector3D>();
-}
-
-QVector<QVector3D> Physics::Actor::GetMeshTextureCoords() const
-{
-	return QVector<QVector3D>();
-}
-
-QVector<ushort> Physics::Actor::GetIndices() const
-{
-	return QVector<ushort>();
 }

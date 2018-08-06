@@ -50,7 +50,7 @@ class Physics : public QObject
 	static const float DELTA_MIN;
 	static const float DELTA_MAX;
 
-	protected:
+	public:
 
 	class Actor : public ISceneObjectProvider
 	{
@@ -62,12 +62,12 @@ class Physics : public QObject
 
 		private: // ISceneObjectProvider implementation
 
-		virtual QMatrix4x4 GetTransform()                 const;
-		virtual QVector<QVector3D> GetMeshPositions()     const;
-		virtual QVector<QVector3D> GetMeshNormals()       const;
-		virtual QVector<QVector3D> GetMeshTextureCoords() const;
-		virtual QVector<ushort>    GetIndices()           const;
+		virtual QMatrix4x4      GetTransform() const;
+		virtual QVector<float>  GetVertices()  const { return QVector<float>();  }
+		virtual QVector<ushort> GetIndices()   const { return QVector<ushort>(); }
 	};
+
+	private:
 
 	physx::PxFoundation*   m_Foundation;
 	physx::PxPhysics*      m_Physics;
@@ -75,9 +75,7 @@ class Physics : public QObject
 
 	IPhysicsSceneProvider* m_ActiveScene;
 
-	QLinkedList<Actor>     m_Actors;
-
-	private:
+	QLinkedList<Actor *>   m_Actors;
 
 	QTimer                 m_Timer;
 	QElapsedTimer          m_Elapsed;
@@ -102,7 +100,7 @@ class Physics : public QObject
 
 	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
 	void AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
-	void AddMesh (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
+	void AddMesh (Actor *actor, const QVector4D &color, const QVector2D &tiling);
 
 	void CleanActors();
 
@@ -130,7 +128,7 @@ class Physics : public QObject
 
 	void UpdateFallens();
 
-	void AddActor(physx::PxRigidActor *actor);
+	void AddActor(Actor *actor);
 };
 
 #endif // PHYSICS_H

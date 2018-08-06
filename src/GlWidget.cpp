@@ -138,10 +138,10 @@ void GlWidget::initializeGL()
 
 	m_DepthUniformMVP                   = glGetUniformLocation(m_DepthShaderProgram, "mvp");
 
-	CreateVertices(&m_CubeVertices,   GlConstants::CUBE_VERTICES_COUNT,   GlConstants::CUBE_VERTICES);
-	CreateIndices (&m_CubeIndices,    GlConstants::CUBE_INDICES_COUNT,    GlConstants::CUBE_INDICES);
-	CreateVertices(&m_SphereVertices, GlConstants::SPHERE_VERTICES_COUNT, GlConstants::SPHERE_VERTICES);
-	CreateIndices (&m_SphereIndices,  GlConstants::SPHERE_INDICES_COUNT,  GlConstants::SPHERE_INDICES);
+	m_CubeVertices   = CreateVertices(GlConstants::CUBE_VERTICES_COUNT,   GlConstants::CUBE_VERTICES);
+	m_CubeIndices    = CreateIndices(GlConstants::CUBE_TRIANGLES_COUNT,   GlConstants::CUBE_INDICES);
+	m_SphereVertices = CreateVertices(GlConstants::SPHERE_VERTICES_COUNT, GlConstants::SPHERE_VERTICES);
+	m_SphereIndices  = CreateIndices(GlConstants::SPHERE_TRIANGLES_COUNT, GlConstants::SPHERE_INDICES);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -398,7 +398,7 @@ void GlWidget::AddBox(const ISceneObjectProvider* sceneObject, const QVector4D& 
 	{
 		m_CubeVertices,
 		m_CubeIndices,
-		GlConstants::CUBE_INDICES_COUNT,
+		GlConstants::CUBE_TRIANGLES_COUNT,
 		color,
 		tiling,
 		QMatrix4x4(),
@@ -412,7 +412,7 @@ void GlWidget::AddSpere(const ISceneObjectProvider* sceneObject, const QVector4D
 	{
 		m_SphereVertices,
 		m_SphereIndices,
-		GlConstants::SPHERE_INDICES_COUNT,
+		GlConstants::SPHERE_TRIANGLES_COUNT,
 		color,
 		tiling,
 		QMatrix4x4(),
@@ -422,6 +422,23 @@ void GlWidget::AddSpere(const ISceneObjectProvider* sceneObject, const QVector4D
 
 void GlWidget::AddMesh(const ISceneObjectProvider* sceneObject, const QVector4D &color, const QVector2D &tiling)
 {
+	QVector<float>  meshVertices = sceneObject->GetVertices();
+	QVector<ushort> meshIndices  = sceneObject->GetIndices();
+	uint   indicesCount = meshIndices.size() / 3;
+
+	GLuint vertexBuffer = CreateVertices(meshVertices.size(), meshVertices.constData());
+	GLuint indexBuffer  = CreateIndices(indicesCount, meshIndices.constData());
+
+	m_RenderObjects.push_back(RenderObject
+	{
+		vertexBuffer,
+		indexBuffer,
+		indicesCount,
+		color,
+		tiling,
+		QMatrix4x4(),
+		sceneObject
+	});
 }
 
 void GlWidget::ActivatePrevScene()
@@ -512,22 +529,26 @@ GLuint GlWidget::CreateProgram(GLuint vertexShader, GLuint fragmentShader)
 	return program;
 }
 
-void GlWidget::CreateVertexBuffer(GLuint *vertexBuffer, GLenum type, uint size, const void* data)
+GLuint GlWidget::CreateVertexBuffer(GLenum type, uint size, const void* data)
 {
-	glGenBuffers(1, vertexBuffer);
-	glBindBuffer(type, *vertexBuffer);
+	GLuint vertexBuffer;
+
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(type, vertexBuffer);
 	glBufferData(type, size, data, GL_STATIC_DRAW);
 	glBindBuffer(type, 0);
 
-	m_VertexBuffers.push_back(*vertexBuffer);
+	m_VertexBuffers.push_back(vertexBuffer);
+
+	return vertexBuffer;
 }
 
-void GlWidget::CreateVertices(GLuint *vertexBuffer, uint count, const void* data)
+GLuint GlWidget::CreateVertices(uint count, const void* data)
 {
-	CreateVertexBuffer(vertexBuffer, GL_ARRAY_BUFFER, sizeof(float) * 8 * count, data);
+	return CreateVertexBuffer(GL_ARRAY_BUFFER, sizeof(float) * 8 * count, data);
 }
 
-void GlWidget::CreateIndices(GLuint *vertexBuffer, uint count, const void* data)
+GLuint GlWidget::CreateIndices(uint count, const void* data)
 {
-	CreateVertexBuffer(vertexBuffer, GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 3 * count, data);
+	return CreateVertexBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort) * 3 * count, data);
 }

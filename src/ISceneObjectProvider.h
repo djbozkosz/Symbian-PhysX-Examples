@@ -16,11 +16,9 @@ class ISceneObjectProvider
 
 	virtual ~ISceneObjectProvider() {}
 
-	virtual QMatrix4x4 GetTransform()                 const = 0;
-	virtual QVector<QVector3D> GetMeshPositions()     const = 0;
-	virtual QVector<QVector3D> GetMeshNormals()       const = 0;
-	virtual QVector<QVector3D> GetMeshTextureCoords() const = 0;
-	virtual QVector<ushort>    GetIndices()           const = 0;
+	virtual QMatrix4x4      GetTransform() const = 0;
+	virtual QVector<float>  GetVertices()  const = 0;
+	virtual QVector<ushort> GetIndices()   const = 0;
 };
 
 #endif // ISCENEOBJECTPROVIDER_H
