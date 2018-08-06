@@ -27,7 +27,6 @@ void Scene00::OnInitialize()
 			physx::PxBoxGeometry(0.5f, 0.5f, 0.5f),
 			*m_DefaultMaterial,
 			10.0f);
-		box->setWakeCounter(box->getWakeCounter() * 0.2f);
 
 		m_Physics->AddBox(box, QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
 	}
