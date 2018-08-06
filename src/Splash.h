@@ -29,7 +29,8 @@ class Splash : public QSplashScreen
 	virtual bool eventFilter(QObject *watched, QEvent *event);
 
 	protected:
-		virtual void paintEvent(QPaintEvent *e);
+
+	virtual void paintEvent(QPaintEvent *e);
 };
 
 #endif // SPLASH_H
