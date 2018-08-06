@@ -1,25 +1,73 @@
 #include "Scene02.h"
 
-const physx::PxVec3 Scene02::VERTICES[] =
-{
-	physx::PxVec3(-50.0f, 20.0f, -50.0f),
-	physx::PxVec3( 50.0f, 20.0f, -50.0f),
-	physx::PxVec3(-50.0f, 20.0f,  50.0f),
-	physx::PxVec3( 50.0f, 20.0f,  50.0f),
-	physx::PxVec3(  0.0f,  0.0f,   0.0f)
-};
+float         Scene02::FUNNEL_VERTICES   [(Scene02::FUNNEL_VERTICES_COUNT + 1) * 8];
+ushort        Scene02::FUNNEL_INDICES    [Scene02::FUNNEL_VERTICES_COUNT * 3];
+physx::PxVec3 Scene02::FUNNEL_PX_VERTICES[Scene02::FUNNEL_VERTICES_COUNT + 1];
+physx::PxU32  Scene02::FUNNEL_PX_INDICES [Scene02::FUNNEL_VERTICES_COUNT * 3];
 
-const physx::PxU32 Scene02::INDICES[] =
+QVector<float> Scene02::Funnel::GetVertices() const
 {
-	0, 2, 4,
-	2, 3, 4,
-	3, 1, 4,
-	1, 0, 4
-};
+	QVector<float> vertices = QVector<float>((Scene02::FUNNEL_VERTICES_COUNT + 1) * 8);
+	memcpy(vertices.data(), Scene02::FUNNEL_VERTICES, sizeof(float) * vertices.size());
+	return vertices;
+}
+
+QVector<ushort> Scene02::Funnel::GetIndices() const
+{
+	QVector<ushort> indices = QVector<ushort>(Scene02::FUNNEL_VERTICES_COUNT * 3);
+	memcpy(indices.data(), Scene02::FUNNEL_INDICES, sizeof(ushort) * indices.size());
+	return indices;
+}
 
 Scene02::Scene02(Physics* physics, QObject* parent) :
 	SceneBase(physics, parent)
 {
+	const float radAngleStep = 1.0f / Scene02::FUNNEL_VERTICES_COUNT * 6.283185307179586476925286766559f;
+	float radAngle           = 0.0f;
+
+	for(uint idx = 0; idx < Scene02::FUNNEL_VERTICES_COUNT; idx++, radAngle += radAngleStep)
+	{
+		float angleSin = sinf(radAngle);
+		float angleCos = cosf(radAngle);
+
+		FUNNEL_PX_VERTICES[idx].x = angleCos * 100.0f;
+		FUNNEL_PX_VERTICES[idx].y = 40.0f;
+		FUNNEL_PX_VERTICES[idx].z = angleSin * 100.0f;
+
+		FUNNEL_VERTICES[idx * 8 + 0] = angleCos * 100.0f;
+		FUNNEL_VERTICES[idx * 8 + 1] = 40.0f;
+		FUNNEL_VERTICES[idx * 8 + 2] = angleSin * 100.0f;
+
+		FUNNEL_VERTICES[idx * 8 + 3] = -angleCos;
+		FUNNEL_VERTICES[idx * 8 + 4] = 0.0f;
+		FUNNEL_VERTICES[idx * 8 + 5] = -angleSin;
+
+		FUNNEL_VERTICES[idx * 8 + 6] = angleCos;
+		FUNNEL_VERTICES[idx * 8 + 7] = angleSin;
+
+		FUNNEL_PX_INDICES[idx * 3 + 0] = (idx + 1) % Scene02::FUNNEL_VERTICES_COUNT;
+		FUNNEL_PX_INDICES[idx * 3 + 1] = idx;
+		FUNNEL_PX_INDICES[idx * 3 + 2] = Scene02::FUNNEL_VERTICES_COUNT;
+
+		FUNNEL_INDICES[idx * 3 + 0] = FUNNEL_PX_INDICES[idx * 3 + 0];
+		FUNNEL_INDICES[idx * 3 + 1] = FUNNEL_PX_INDICES[idx * 3 + 1];
+		FUNNEL_INDICES[idx * 3 + 2] = FUNNEL_PX_INDICES[idx * 3 + 2];
+	}
+
+	physx::PxVec3* pxCenter = &FUNNEL_PX_VERTICES[Scene02::FUNNEL_VERTICES_COUNT];
+	pxCenter->x = 0.0f;
+	pxCenter->y = 0.0f;
+	pxCenter->z = 0.0f;
+
+	float* vxCenter = &FUNNEL_VERTICES[Scene02::FUNNEL_VERTICES_COUNT * 8];
+	vxCenter[0] = 0.0f;
+	vxCenter[1] = 0.0f;
+	vxCenter[2] = 0.0f;
+	vxCenter[3] = 0.0f;
+	vxCenter[4] = 1.0f;
+	vxCenter[5] = 0.0f;
+	vxCenter[6] = 0.0f;
+	vxCenter[7] = 0.0f;
 }
 
 Scene02::~Scene02()
@@ -28,21 +76,15 @@ Scene02::~Scene02()
 
 void Scene02::OnInitialize()
 {
-	physx::PxRigidStatic* plane = physx::PxCreateStatic(
-		*m_Physics->GetPhysics(),
-		physx::PxTransform(physx::PxVec3(0.0f, -0.5f, 0.0f)),
-		physx::PxBoxGeometry(50.0f, 0.5f, 50.0f),
-		*m_DefaultMaterial);
-
-	m_Physics->AddBox(plane, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
+	m_BoxMaterial = m_Physics->GetPhysics()->createMaterial(0.5f, 0.001f, 1.0f);
 
 	physx::PxTriangleMeshDesc meshDescriptor;
-	meshDescriptor.points.count     = 5;
+	meshDescriptor.points.count     = Scene02::FUNNEL_VERTICES_COUNT + 1;
 	meshDescriptor.points.stride    = sizeof(physx::PxVec3);
-	meshDescriptor.points.data      = VERTICES;
-	meshDescriptor.triangles.count  = 4;
+	meshDescriptor.points.data      = FUNNEL_PX_VERTICES;
+	meshDescriptor.triangles.count  = Scene02::FUNNEL_VERTICES_COUNT;
 	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
-	meshDescriptor.triangles.data   = INDICES;
+	meshDescriptor.triangles.data   = FUNNEL_PX_INDICES;
 
 	physx::PxDefaultMemoryOutputStream outStream(*m_Physics->GetAllocator());
 	m_Physics->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);
@@ -56,11 +98,11 @@ void Scene02::OnInitialize()
 		physx::PxTriangleMeshGeometry(mesh),
 		*m_DefaultMaterial);
 
-	m_Physics->AddMesh(meshStatic, QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
+	m_Physics->AddMesh(new Funnel(meshStatic), QVector4D(0.2f, 0.3f, 0.4f, 16.0f), QVector2D(100.0f, 100.0f));
 
 	for(uint idx = 0; idx < SPHERES_COUNT; idx++)
 	{
-		m_Spheres.push_back(physx::PxCreateDynamic(
+		m_Objects.push_back(physx::PxCreateDynamic(
 			*m_Physics->GetPhysics(),
 			physx::PxTransform(physx::PxVec3(
 				(float)(rand() % 1000) * 0.04f - 20.0f,
@@ -70,33 +112,34 @@ void Scene02::OnInitialize()
 			*m_DefaultMaterial,
 			10.0f));
 
-		m_Physics->AddSpere(m_Spheres.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
+		m_Physics->AddSpere(m_Objects.back(), QVector4D(0.9f, 0.2f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
 	}
 
 	for(uint idx = 0; idx < BOXES_COUNT; idx++)
 	{
-		m_Spheres.push_back(physx::PxCreateDynamic(
+		m_Objects.push_back(physx::PxCreateDynamic(
 			*m_Physics->GetPhysics(),
 			physx::PxTransform(physx::PxVec3(
 				(float)(rand() % 1000) * 0.04f - 20.0f,
 				(float)(rand() % 1000) * 0.03f + 10.0f,
 				(float)(rand() % 1000) * 0.04f - 20.0f)),
 			physx::PxBoxGeometry(0.5f, 0.5f, 0.5f),
-			*m_DefaultMaterial,
+			*m_BoxMaterial,
 			0.1f));
 
-		m_Physics->AddBox(m_Spheres.back(), QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
+		m_Physics->AddBox(m_Objects.back(), QVector4D(1.0f, 0.8f, 0.6f, 16.0f), QVector2D(1.0f, 1.0f));
 	}
 }
 
 void Scene02::OnDeinitialize()
 {
-	m_Spheres.clear();
+	m_BoxMaterial->release();
+	m_Objects.clear();
 }
 
 void Scene02::OnUpdate()
 {
-	foreach(sphere, m_Spheres)
+	foreach(sphere, m_Objects)
 	{
 		physx::PxRigidDynamic* sphereDynamic = *sphere;
 		const physx::PxVec3 position = sphereDynamic->getGlobalPose().p;
