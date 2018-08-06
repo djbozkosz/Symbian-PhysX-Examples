@@ -33,6 +33,8 @@ void SceneBase::Deinitialize()
 
 	OnDeinitialize();
 
+	m_DefaultMaterial->release();
+
 	m_Physics->CleanActors();
 	m_Scene->release();
 }
