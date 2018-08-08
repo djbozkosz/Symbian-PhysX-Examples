@@ -18,7 +18,8 @@ SOURCES += \
 	src/SceneBase.cpp \
 	src/Scene00.cpp \
 	src/Scene01.cpp \
-	src/Scene02.cpp
+	src/Scene02.cpp \
+	src/Scene03.cpp
 
 HEADERS += \
 	src/ISceneProvider.h \
@@ -31,7 +32,8 @@ HEADERS += \
 	src/SceneBase.h \
 	src/Scene00.h \
 	src/Scene01.h \
-	src/Scene02.h
+	src/Scene02.h \
+	src/Scene03.h
 
 INCLUDEPATH += \
 	src/PhysX/PhysX_3.4/include \
