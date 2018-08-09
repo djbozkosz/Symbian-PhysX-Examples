@@ -1,11 +1,25 @@
 #ifndef GLMESHES_H
 #define GLMESHES_H
 
+#include <QMap>
 #include <QtGlobal>
+
+#include <foundation/PxVec3.h>
 
 class GlConstants
 {
 	public:
+
+	struct Mesh
+	{
+		uint          VerticesCount;
+		uint          IndicesCount;
+
+		float         Vertices[];
+		ushort        Indices[];
+		physx::PxVec3 PxVertices[];
+		physx::PxU32  PxIndices[];
+	};
 
 	static const char* ILLUMINATION_VERTEX_SHADER;
 	static const char* ILLUMINATION_FRAGMENT_SHADER;
@@ -22,6 +36,10 @@ class GlConstants
 	static const uint   SPHERE_TRIANGLES_COUNT = 256;
 	static const float  SPHERE_VERTICES[];
 	static const ushort SPHERE_INDICES[];
+
+	static const QMap<uint, Mesh> FUNNELS;
+
+	static Mesh* GetFunnel(uint verticesCount);
 };
 
 #endif // GLMESHES_H

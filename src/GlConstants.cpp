@@ -651,3 +651,10 @@ const ushort GlConstants::SPHERE_INDICES[] =
 	231, 0, 30,
 	232, 229, 200
 };
+
+const QMap<uint, GlConstants::Mesh> GlConstants::FUNNELS;
+
+GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
+{
+	return NULL;
+}
