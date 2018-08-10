@@ -652,9 +652,66 @@ const ushort GlConstants::SPHERE_INDICES[] =
 	232, 229, 200
 };
 
-const QMap<uint, GlConstants::Mesh> GlConstants::FUNNELS;
+QMap<uint, GlConstants::Mesh> GlConstants::FUNNELS;
 
 GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
 {
-	return NULL;
+	Mesh* mesh = &FUNNELS[verticesCount];
+
+	if (mesh->VerticesCount != 0)
+		return mesh;
+
+	mesh->Vertices  .resize((verticesCount + 1) * 8);
+	mesh->Indices   .resize(verticesCount * 3);
+	mesh->PxVertices.resize(verticesCount + 1);
+	mesh->PxIndices .resize(verticesCount * 3);
+
+	const float radAngleStep = 1.0f / verticesCount * 6.283185307179586476925286766559f;
+	float radAngle           = 0.0f;
+
+	for (uint idx = 0; idx < verticesCount; idx++, radAngle += radAngleStep)
+	{
+		float angleSin = sinf(radAngle);
+		float angleCos = cosf(radAngle);
+
+		mesh->Vertices[idx * 8 + 0] = angleCos * 100.0f;
+		mesh->Vertices[idx * 8 + 1] = 40.0f;
+		mesh->Vertices[idx * 8 + 2] = angleSin * 100.0f;
+
+		mesh->Vertices[idx * 8 + 3] = -angleCos;
+		mesh->Vertices[idx * 8 + 4] = 0.0f;
+		mesh->Vertices[idx * 8 + 5] = -angleSin;
+
+		mesh->Vertices[idx * 8 + 6] = angleCos;
+		mesh->Vertices[idx * 8 + 7] = angleSin;
+
+		mesh->Indices[idx * 3 + 0] = (idx + 1) % verticesCount;
+		mesh->Indices[idx * 3 + 1] = idx;
+		mesh->Indices[idx * 3 + 2] = verticesCount;
+
+		mesh->PxVertices[idx].x = angleCos * 100.0f;
+		mesh->PxVertices[idx].y = 40.0f;
+		mesh->PxVertices[idx].z = angleSin * 100.0f;
+
+		mesh->PxIndices[idx * 3 + 0] = mesh->Indices[idx * 3 + 0];
+		mesh->PxIndices[idx * 3 + 1] = mesh->Indices[idx * 3 + 1];
+		mesh->PxIndices[idx * 3 + 2] = mesh->Indices[idx * 3 + 2];
+	}
+
+	float* vxCenter = &mesh->Vertices[verticesCount * 8];
+	vxCenter[0] = 0.0f;
+	vxCenter[1] = 0.0f;
+	vxCenter[2] = 0.0f;
+	vxCenter[3] = 0.0f;
+	vxCenter[4] = 1.0f;
+	vxCenter[5] = 0.0f;
+	vxCenter[6] = 0.0f;
+	vxCenter[7] = 0.0f;
+
+	physx::PxVec3* pxCenter = &mesh->PxVertices[verticesCount];
+	pxCenter->x = 0.0f;
+	pxCenter->y = 0.0f;
+	pxCenter->z = 0.0f;
+
+	return mesh;
 }

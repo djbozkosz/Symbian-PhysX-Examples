@@ -1,6 +1,7 @@
 #ifndef GLMESHES_H
 #define GLMESHES_H
 
+#include <QVector>
 #include <QMap>
 #include <QtGlobal>
 
@@ -12,13 +13,13 @@ class GlConstants
 
 	struct Mesh
 	{
-		uint          VerticesCount;
-		uint          IndicesCount;
+		uint                   VerticesCount;
+		uint                   IndicesCount;
 
-		float         Vertices[];
-		ushort        Indices[];
-		physx::PxVec3 PxVertices[];
-		physx::PxU32  PxIndices[];
+		QVector<float>         Vertices;
+		QVector<ushort>        Indices;
+		QVector<physx::PxVec3> PxVertices;
+		QVector<physx::PxU32>  PxIndices;
 	};
 
 	static const char* ILLUMINATION_VERTEX_SHADER;
@@ -37,7 +38,7 @@ class GlConstants
 	static const float  SPHERE_VERTICES[];
 	static const ushort SPHERE_INDICES[];
 
-	static const QMap<uint, Mesh> FUNNELS;
+	static QMap<uint, Mesh> FUNNELS;
 
 	static Mesh* GetFunnel(uint verticesCount);
 };
