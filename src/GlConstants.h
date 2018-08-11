@@ -13,9 +13,6 @@ class GlConstants
 
 	struct Mesh
 	{
-		uint                   VerticesCount;
-		uint                   IndicesCount;
-
 		QVector<float>         Vertices;
 		QVector<ushort>        Indices;
 		QVector<physx::PxVec3> PxVertices;
@@ -38,9 +35,13 @@ class GlConstants
 	static const float  SPHERE_VERTICES[];
 	static const ushort SPHERE_INDICES[];
 
+	private:
+
 	static QMap<uint, Mesh> FUNNELS;
 
-	static Mesh* GetFunnel(uint verticesCount);
+	public:
+
+	static const Mesh* GetFunnel(uint verticesCount);
 };
 
 #endif // GLMESHES_H

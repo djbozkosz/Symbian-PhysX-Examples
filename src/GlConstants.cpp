@@ -654,11 +654,11 @@ const ushort GlConstants::SPHERE_INDICES[] =
 
 QMap<uint, GlConstants::Mesh> GlConstants::FUNNELS;
 
-GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
+const GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
 {
 	Mesh* mesh = &FUNNELS[verticesCount];
 
-	if (mesh->VerticesCount != 0)
+	if (mesh->PxVertices.size() != 0)
 		return mesh;
 
 	mesh->Vertices  .resize((verticesCount + 1) * 8);
