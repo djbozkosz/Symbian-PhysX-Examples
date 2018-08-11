@@ -1,73 +1,20 @@
 #include "Scene02.h"
 
-float         Scene02::FUNNEL_VERTICES   [(Scene02::FUNNEL_VERTICES_COUNT + 1) * 8];
-ushort        Scene02::FUNNEL_INDICES    [Scene02::FUNNEL_VERTICES_COUNT * 3];
-physx::PxVec3 Scene02::FUNNEL_PX_VERTICES[Scene02::FUNNEL_VERTICES_COUNT + 1];
-physx::PxU32  Scene02::FUNNEL_PX_INDICES [Scene02::FUNNEL_VERTICES_COUNT * 3];
+#include "GlConstants.h" // TODO
 
 QVector<float> Scene02::Funnel::GetVertices() const
 {
-	QVector<float> vertices = QVector<float>((Scene02::FUNNEL_VERTICES_COUNT + 1) * 8);
-	memcpy(vertices.data(), Scene02::FUNNEL_VERTICES, sizeof(float) * vertices.size());
-	return vertices;
+	return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Vertices;
 }
 
 QVector<ushort> Scene02::Funnel::GetIndices() const
 {
-	QVector<ushort> indices = QVector<ushort>(Scene02::FUNNEL_VERTICES_COUNT * 3);
-	memcpy(indices.data(), Scene02::FUNNEL_INDICES, sizeof(ushort) * indices.size());
-	return indices;
+	return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Indices;
 }
 
 Scene02::Scene02(Physics* physics, QObject* parent) :
 	SceneBase(physics, parent)
 {
-	const float radAngleStep = 1.0f / Scene02::FUNNEL_VERTICES_COUNT * 6.283185307179586476925286766559f;
-	float radAngle           = 0.0f;
-
-	for (uint idx = 0; idx < Scene02::FUNNEL_VERTICES_COUNT; idx++, radAngle += radAngleStep)
-	{
-		float angleSin = sinf(radAngle);
-		float angleCos = cosf(radAngle);
-
-		FUNNEL_PX_VERTICES[idx].x = angleCos * 100.0f;
-		FUNNEL_PX_VERTICES[idx].y = 40.0f;
-		FUNNEL_PX_VERTICES[idx].z = angleSin * 100.0f;
-
-		FUNNEL_VERTICES[idx * 8 + 0] = angleCos * 100.0f;
-		FUNNEL_VERTICES[idx * 8 + 1] = 40.0f;
-		FUNNEL_VERTICES[idx * 8 + 2] = angleSin * 100.0f;
-
-		FUNNEL_VERTICES[idx * 8 + 3] = -angleCos;
-		FUNNEL_VERTICES[idx * 8 + 4] = 0.0f;
-		FUNNEL_VERTICES[idx * 8 + 5] = -angleSin;
-
-		FUNNEL_VERTICES[idx * 8 + 6] = angleCos;
-		FUNNEL_VERTICES[idx * 8 + 7] = angleSin;
-
-		FUNNEL_PX_INDICES[idx * 3 + 0] = (idx + 1) % Scene02::FUNNEL_VERTICES_COUNT;
-		FUNNEL_PX_INDICES[idx * 3 + 1] = idx;
-		FUNNEL_PX_INDICES[idx * 3 + 2] = Scene02::FUNNEL_VERTICES_COUNT;
-
-		FUNNEL_INDICES[idx * 3 + 0] = FUNNEL_PX_INDICES[idx * 3 + 0];
-		FUNNEL_INDICES[idx * 3 + 1] = FUNNEL_PX_INDICES[idx * 3 + 1];
-		FUNNEL_INDICES[idx * 3 + 2] = FUNNEL_PX_INDICES[idx * 3 + 2];
-	}
-
-	physx::PxVec3* pxCenter = &FUNNEL_PX_VERTICES[Scene02::FUNNEL_VERTICES_COUNT];
-	pxCenter->x = 0.0f;
-	pxCenter->y = 0.0f;
-	pxCenter->z = 0.0f;
-
-	float* vxCenter = &FUNNEL_VERTICES[Scene02::FUNNEL_VERTICES_COUNT * 8];
-	vxCenter[0] = 0.0f;
-	vxCenter[1] = 0.0f;
-	vxCenter[2] = 0.0f;
-	vxCenter[3] = 0.0f;
-	vxCenter[4] = 1.0f;
-	vxCenter[5] = 0.0f;
-	vxCenter[6] = 0.0f;
-	vxCenter[7] = 0.0f;
 }
 
 Scene02::~Scene02()
@@ -78,13 +25,15 @@ void Scene02::OnInitialize()
 {
 	m_BoxMaterial = PhysicsEngine->GetPhysics()->createMaterial(0.5f, 0.001f, 1.0f);
 
+	const GlConstants::Mesh* funnel = GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT);
+
 	physx::PxTriangleMeshDesc meshDescriptor;
-	meshDescriptor.points.count     = Scene02::FUNNEL_VERTICES_COUNT + 1;
+	meshDescriptor.points.count     = funnel->PxVertices.size();
 	meshDescriptor.points.stride    = sizeof(physx::PxVec3);
-	meshDescriptor.points.data      = FUNNEL_PX_VERTICES;
-	meshDescriptor.triangles.count  = Scene02::FUNNEL_VERTICES_COUNT;
+	meshDescriptor.points.data      = funnel->PxVertices.constData();
+	meshDescriptor.triangles.count  = funnel->PxIndices.size() / 3;
 	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
-	meshDescriptor.triangles.data   = FUNNEL_PX_INDICES;
+	meshDescriptor.triangles.data   = funnel->PxIndices.constData();
 
 	physx::PxDefaultMemoryOutputStream outStream(*PhysicsEngine->GetAllocator());
 	PhysicsEngine->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);

@@ -23,11 +23,6 @@ class Scene02 : public SceneBase
 	static const uint SPHERES_COUNT         = 50;
 	static const uint BOXES_COUNT           = 50;
 
-	static float         FUNNEL_VERTICES[];
-	static ushort        FUNNEL_INDICES[];
-	static physx::PxVec3 FUNNEL_PX_VERTICES[];
-	static physx::PxU32  FUNNEL_PX_INDICES[];
-
 	class Funnel : public Physics::Actor
 	{
 		public:
