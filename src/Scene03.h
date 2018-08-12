@@ -1,32 +1,24 @@
 #ifndef SCENE03_H
 #define SCENE03_H
 
-#include "SceneBase.h"
+#include "Scene02.h"
 
-class Scene03 : public SceneBase
+class Scene03 : public Scene02
 {
 	private:
 
 	Q_OBJECT
 
-	/*static const uint FUNNEL_VERTICES_COUNT = 32;
-	static const uint OBJECTS_COUNT         = 1;
-
-	static float         FUNNEL_VERTICES[];
-	static ushort        FUNNEL_INDICES[];
-	static physx::PxVec3 FUNNEL_PX_VERTICES[];
-	static physx::PxU32  FUNNEL_PX_INDICES[];*/
+	static const uint OBJECTS_COUNT = 1;
 
 	public:
 
 	explicit Scene03(Physics* physics = NULL, QObject* parent = NULL);
 	virtual ~Scene03();
 
-	private: // SceneBase implementation
+	protected: // Scene02 implementation
 
-	virtual void OnInitialize();
-	virtual void OnDeinitialize();
-	virtual void OnUpdate();
+	void OnInitializeObjects();
 };
 
 #endif // SCENE03_H
