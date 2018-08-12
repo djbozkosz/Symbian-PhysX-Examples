@@ -9,7 +9,20 @@ class Scene03 : public Scene02
 
 	Q_OBJECT
 
-	static const uint OBJECTS_COUNT = 1;
+	static const uint DIAMOND_VERTICES_COUNT = 10;
+	static const uint OBJECTS_COUNT          = 1;
+
+	class Diamond : public Physics::Actor
+	{
+		public:
+
+		Diamond(physx::PxRigidActor* rigidActor) : Physics::Actor(rigidActor) {}
+
+		private: // ISceneObjectProvider implementation
+
+		virtual QVector<float>  GetVertices() const { return GlConstants::GetDiamond(DIAMOND_VERTICES_COUNT)->Vertices; }
+		virtual QVector<ushort> GetIndices()  const { return GlConstants::GetDiamond(DIAMOND_VERTICES_COUNT)->Indices;  }
+	};
 
 	public:
 
