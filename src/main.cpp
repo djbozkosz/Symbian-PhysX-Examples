@@ -9,6 +9,7 @@
 #include "Scene00.h"
 #include "Scene01.h"
 #include "Scene02.h"
+#include "Scene03.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,6 +33,7 @@ int main(int argc, char *argv[])
 	Scene00    sample00(&physics);
 	Scene01    sample01(&physics);
 	Scene02    sample02(&physics);
+	Scene03    sample03(&physics);
 
 	GlWidget *glWidget = mainWindow.GetGlWidget();
 	QObject::connect(glWidget, SIGNAL(StatsUpdated_RenderSec(float)), &physics, SLOT(SetAdditionalDelta(float)));
@@ -52,6 +54,7 @@ int main(int argc, char *argv[])
 	glWidget->AddScene(&sample00);
 	glWidget->AddScene(&sample01);
 	glWidget->AddScene(&sample02);
+	glWidget->AddScene(&sample03);
 
 	return application.exec();
 }
