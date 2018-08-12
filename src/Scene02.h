@@ -24,6 +24,11 @@ class Scene02 : public SceneBase
 	static const uint SPHERES_COUNT         = 50;
 	static const uint BOXES_COUNT           = 50;
 
+	protected:
+
+	QLinkedList<physx::PxRigidDynamic*> Objects;
+	physx::PxMaterial* BoxMaterial;
+
 	class Funnel : public Physics::Actor
 	{
 		public:
@@ -36,9 +41,6 @@ class Scene02 : public SceneBase
 		virtual QVector<ushort> GetIndices()  const { return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Indices;  }
 	};
 
-	QLinkedList<physx::PxRigidDynamic*> m_Objects;
-	physx::PxMaterial* m_BoxMaterial;
-
 	public:
 
 	explicit Scene02(Physics* physics = NULL, QObject* parent = NULL);
@@ -49,6 +51,10 @@ class Scene02 : public SceneBase
 	virtual void OnInitialize();
 	virtual void OnDeinitialize();
 	virtual void OnUpdate();
+
+	protected:
+
+	virtual void OnInitializeObjects();
 };
 
 #endif // SCENE02_H
