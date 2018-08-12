@@ -81,6 +81,24 @@ void Physics::SetAdditionalDelta(float delta)
 	m_AdditionalDelta = delta;
 }
 
+physx::PxTriangleMesh* Physics::CreateMesh(const QVector<physx::PxVec3> &vertices, const QVector<physx::PxU32> &indices)
+{
+	physx::PxTriangleMeshDesc meshDescriptor;
+	meshDescriptor.points.count     = vertices.size();
+	meshDescriptor.points.stride    = sizeof(physx::PxVec3);
+	meshDescriptor.points.data      = vertices.constData();
+	meshDescriptor.triangles.count  = indices.size() / 3;
+	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
+	meshDescriptor.triangles.data   = indices.constData();
+
+	physx::PxDefaultMemoryOutputStream outStream(m_AllocatorCallback);
+	m_Cooking->cookTriangleMesh(meshDescriptor, outStream);
+
+	physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
+
+	return m_Physics->createTriangleMesh(inStream);
+}
+
 void Physics::AddBox(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
 {
 	AddActor(new Actor(actor));
