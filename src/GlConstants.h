@@ -38,10 +38,12 @@ class GlConstants
 	private:
 
 	static QMap<uint, Mesh> FUNNELS;
+	static QMap<uint, Mesh> DIAMONDS;
 
 	public:
 
 	static const Mesh* GetFunnel(uint verticesCount);
+	static const Mesh* GetDiamond(uint verticesCount);
 };
 
 #endif // GLMESHES_H
