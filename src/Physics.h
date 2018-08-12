@@ -16,9 +16,16 @@
 #include <PxSceneDesc.h>
 #include <PxScene.h>
 #include <PxRigidDynamic.h>
+#include <geometry/PxTriangleMesh.h>
+#include <geometry/PxTriangleMeshGeometry.h>
+#include <geometry/PxConvexMesh.h>
+#include <geometry/PxConvexMeshGeometry.h>
 #include <cooking/PxCooking.h>
+#include <cooking/PxTriangleMeshDesc.h>
+#include <cooking/PxConvexMeshDesc.h>
 #include <extensions/PxExtensionsAPI.h>
 #include <extensions/PxSimpleFactory.h>
+#include <extensions/PxDefaultStreams.h>
 
 #include "ISceneProvider.h"
 #include "ISceneObjectProvider.h"

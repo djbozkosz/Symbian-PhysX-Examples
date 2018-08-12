@@ -4,11 +4,7 @@
 #include <PxRigidStatic.h>
 #include <PxRigidDynamic.h>
 #include <PxMaterial.h>
-#include <geometry/PxTriangleMesh.h>
-#include <geometry/PxTriangleMeshGeometry.h>
 #include <geometry/PxSphereGeometry.h>
-#include <cooking/PxTriangleMeshDesc.h>
-#include <extensions/PxDefaultStreams.h>
 #include <extensions/PxSimpleFactory.h>
 
 #include "SceneBase.h"
@@ -24,11 +20,6 @@ class Scene02 : public SceneBase
 	static const uint SPHERES_COUNT         = 50;
 	static const uint BOXES_COUNT           = 50;
 
-	protected:
-
-	QLinkedList<physx::PxRigidDynamic*> Objects;
-	physx::PxMaterial* BoxMaterial;
-
 	class Funnel : public Physics::Actor
 	{
 		public:
@@ -40,6 +31,11 @@ class Scene02 : public SceneBase
 		virtual QVector<float>  GetVertices() const { return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Vertices; }
 		virtual QVector<ushort> GetIndices()  const { return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Indices;  }
 	};
+
+	protected:
+
+	QLinkedList<physx::PxRigidDynamic*> Objects;
+	physx::PxMaterial* BoxMaterial;
 
 	public:
 
