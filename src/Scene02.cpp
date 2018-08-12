@@ -1,17 +1,5 @@
 #include "Scene02.h"
 
-#include "GlConstants.h" // TODO
-
-QVector<float> Scene02::Funnel::GetVertices() const
-{
-	return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Vertices;
-}
-
-QVector<ushort> Scene02::Funnel::GetIndices() const
-{
-	return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Indices;
-}
-
 Scene02::Scene02(Physics* physics, QObject* parent) :
 	SceneBase(physics, parent)
 {
@@ -27,19 +15,7 @@ void Scene02::OnInitialize()
 
 	const GlConstants::Mesh* funnel = GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT);
 
-	physx::PxTriangleMeshDesc meshDescriptor;
-	meshDescriptor.points.count     = funnel->PxVertices.size();
-	meshDescriptor.points.stride    = sizeof(physx::PxVec3);
-	meshDescriptor.points.data      = funnel->PxVertices.constData();
-	meshDescriptor.triangles.count  = funnel->PxIndices.size() / 3;
-	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
-	meshDescriptor.triangles.data   = funnel->PxIndices.constData();
-
-	physx::PxDefaultMemoryOutputStream outStream(*PhysicsEngine->GetAllocator());
-	PhysicsEngine->GetCooking()->cookTriangleMesh(meshDescriptor, outStream);
-
-	physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
-	physx::PxTriangleMesh* mesh = PhysicsEngine->GetPhysics()->createTriangleMesh(inStream);
+	physx::PxTriangleMesh* mesh = PhysicsEngine->CreateMesh(funnel->PxVertices, funnel->PxIndices);
 
 	physx::PxRigidStatic* meshStatic = physx::PxCreateStatic(
 		*PhysicsEngine->GetPhysics(),

@@ -12,6 +12,7 @@
 #include <extensions/PxSimpleFactory.h>
 
 #include "SceneBase.h"
+#include "GlConstants.h"
 
 class Scene02 : public SceneBase
 {
@@ -31,8 +32,8 @@ class Scene02 : public SceneBase
 
 		private: // ISceneObjectProvider implementation
 
-		virtual QVector<float>  GetVertices() const;
-		virtual QVector<ushort> GetIndices()  const;
+		virtual QVector<float>  GetVertices() const { return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Vertices; }
+		virtual QVector<ushort> GetIndices()  const { return GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT)->Indices;  }
 	};
 
 	QLinkedList<physx::PxRigidDynamic*> m_Objects;
