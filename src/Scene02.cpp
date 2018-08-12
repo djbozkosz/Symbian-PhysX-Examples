@@ -36,15 +36,14 @@ void Scene02::OnDeinitialize()
 
 void Scene02::OnUpdate()
 {
-	foreach (sphere, Objects)
+	foreach (obj, Objects)
 	{
-		physx::PxRigidDynamic* sphereDynamic = *sphere;
-		const physx::PxVec3 position = sphereDynamic->getGlobalPose().p;
+		const physx::PxVec3 position = (*obj)->getGlobalPose().p;
 
 		if (sqrtf(position.x * position.x + position.y * position.y + position.z * position.z) > 2.0f)
 			continue;
 
-		sphereDynamic->setLinearVelocity(sphereDynamic->getLinearVelocity() + physx::PxVec3(0.0f, 15.0f, 0.0f));
+		(*obj)->setLinearVelocity((*obj)->getLinearVelocity() + physx::PxVec3(0.0f, 15.0f, 0.0f));
 	}
 }
 
