@@ -106,6 +106,7 @@ class Physics : public QObject
 	inline void SetActiveScene(IPhysicsSceneProvider* scene) { m_ActiveScene = scene; }
 
 	physx::PxTriangleMesh* CreateMesh(const QVector<physx::PxVec3>& vertices, const QVector<physx::PxU32>& indices);
+	physx::PxConvexMesh *CreateConvexMesh(const QVector<physx::PxVec3>& vertices, const QVector<physx::PxU32>& indices);
 
 	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
 	void AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);

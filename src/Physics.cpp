@@ -99,6 +99,22 @@ physx::PxTriangleMesh* Physics::CreateMesh(const QVector<physx::PxVec3> &vertice
 	return m_Physics->createTriangleMesh(inStream);
 }
 
+physx::PxConvexMesh* Physics::CreateConvexMesh(const QVector<physx::PxVec3>& vertices, const QVector<physx::PxU32>& indices)
+{
+	physx::PxConvexMeshDesc meshDescriptor;
+	meshDescriptor.points.count  = vertices.size();
+	meshDescriptor.points.stride = sizeof(physx::PxVec3);
+	meshDescriptor.points.data   = vertices.constData();
+	meshDescriptor.flags         = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+
+	physx::PxDefaultMemoryOutputStream outStream(m_AllocatorCallback);
+	m_Cooking->cookConvexMesh(meshDescriptor, outStream);
+
+	physx::PxDefaultMemoryInputData inStream(outStream.getData(), outStream.getSize());
+
+	return m_Physics->createConvexMesh(inStream);
+}
+
 void Physics::AddBox(physx::PxRigidActor* actor, const QVector4D& color, const QVector2D& tiling)
 {
 	AddActor(new Actor(actor));
