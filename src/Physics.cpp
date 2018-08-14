@@ -81,15 +81,16 @@ void Physics::SetAdditionalDelta(float delta)
 	m_AdditionalDelta = delta;
 }
 
-physx::PxTriangleMesh* Physics::CreateMesh(const QVector<physx::PxVec3> &vertices, const QVector<physx::PxU32> &indices)
+physx::PxTriangleMesh* Physics::CreateMesh(const QVector<float> &vertices, const QVector<ushort> &indices)
 {
 	physx::PxTriangleMeshDesc meshDescriptor;
-	meshDescriptor.points.count     = vertices.size();
-	meshDescriptor.points.stride    = sizeof(physx::PxVec3);
+	meshDescriptor.points.count     = vertices.size() / 8;
+	meshDescriptor.points.stride    = sizeof(float) * 8;
 	meshDescriptor.points.data      = vertices.constData();
 	meshDescriptor.triangles.count  = indices.size() / 3;
-	meshDescriptor.triangles.stride = 3 * sizeof(physx::PxU32);
+	meshDescriptor.triangles.stride = 3 * sizeof(ushort);
 	meshDescriptor.triangles.data   = indices.constData();
+	meshDescriptor.flags            = physx::PxMeshFlag::e16_BIT_INDICES;
 
 	physx::PxDefaultMemoryOutputStream outStream(m_AllocatorCallback);
 	m_Cooking->cookTriangleMesh(meshDescriptor, outStream);
@@ -99,11 +100,11 @@ physx::PxTriangleMesh* Physics::CreateMesh(const QVector<physx::PxVec3> &vertice
 	return m_Physics->createTriangleMesh(inStream);
 }
 
-physx::PxConvexMesh* Physics::CreateConvexMesh(const QVector<physx::PxVec3>& vertices, const QVector<physx::PxU32>& indices)
+physx::PxConvexMesh* Physics::CreateConvexMesh(const QVector<float>& vertices, const QVector<ushort>& indices)
 {
 	physx::PxConvexMeshDesc meshDescriptor;
-	meshDescriptor.points.count  = vertices.size();
-	meshDescriptor.points.stride = sizeof(physx::PxVec3);
+	meshDescriptor.points.count  = vertices.size() / 8;
+	meshDescriptor.points.stride = sizeof(float) * 8;
 	meshDescriptor.points.data   = vertices.constData();
 	meshDescriptor.flags         = physx::PxConvexFlag::eCOMPUTE_CONVEX;
 

@@ -13,10 +13,8 @@ class GlConstants
 
 	struct Mesh
 	{
-		QVector<float>         Vertices;
-		QVector<ushort>        Indices;
-		QVector<physx::PxVec3> PxVertices;
-		QVector<physx::PxU32>  PxIndices;
+		QVector<float>  Vertices;
+		QVector<ushort> Indices;
 	};
 
 	static const char* ILLUMINATION_VERTEX_SHADER;

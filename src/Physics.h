@@ -105,8 +105,8 @@ class Physics : public QObject
 	inline physx::PxAllocatorCallback* GetAllocator()       { return &m_AllocatorCallback; }
 	inline void SetActiveScene(IPhysicsSceneProvider* scene) { m_ActiveScene = scene; }
 
-	physx::PxTriangleMesh* CreateMesh(const QVector<physx::PxVec3>& vertices, const QVector<physx::PxU32>& indices);
-	physx::PxConvexMesh *CreateConvexMesh(const QVector<physx::PxVec3>& vertices, const QVector<physx::PxU32>& indices);
+	physx::PxTriangleMesh* CreateMesh      (const QVector<float> &vertices, const QVector<ushort> &indices);
+	physx::PxConvexMesh*   CreateConvexMesh(const QVector<float> &vertices, const QVector<ushort> &indices);
 
 	void AddBox  (physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);
 	void AddSpere(physx::PxRigidActor *actor, const QVector4D &color, const QVector2D &tiling);

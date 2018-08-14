@@ -15,7 +15,7 @@ void Scene02::OnInitialize()
 
 	const GlConstants::Mesh* funnel = GlConstants::GetFunnel(FUNNEL_VERTICES_COUNT);
 
-	physx::PxTriangleMesh* mesh = PhysicsEngine->CreateMesh(funnel->PxVertices, funnel->PxIndices);
+	physx::PxTriangleMesh* mesh = PhysicsEngine->CreateMesh(funnel->Vertices, funnel->Indices);
 
 	physx::PxRigidStatic* meshStatic = physx::PxCreateStatic(
 		*PhysicsEngine->GetPhysics(),

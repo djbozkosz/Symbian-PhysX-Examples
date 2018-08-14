@@ -659,13 +659,11 @@ const GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
 {
 	Mesh* mesh = &FUNNELS[verticesCount];
 
-	if (mesh->PxVertices.size() != 0)
+	if (mesh->Vertices.size() != 0)
 		return mesh;
 
 	mesh->Vertices  .resize((verticesCount + 1) * 8);
 	mesh->Indices   .resize(verticesCount * 3);
-	mesh->PxVertices.resize(verticesCount + 1);
-	mesh->PxIndices .resize(verticesCount * 3);
 
 	const float radAngleStep = 1.0f / verticesCount * 6.283185307179586476925286766559f;
 	float radAngle           = 0.0f;
@@ -689,14 +687,6 @@ const GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
 		mesh->Indices[idx * 3 + 0] = (idx + 1) % verticesCount;
 		mesh->Indices[idx * 3 + 1] = idx;
 		mesh->Indices[idx * 3 + 2] = verticesCount;
-
-		mesh->PxVertices[idx].x = angleCos * 100.0f;
-		mesh->PxVertices[idx].y = 40.0f;
-		mesh->PxVertices[idx].z = angleSin * 100.0f;
-
-		mesh->PxIndices[idx * 3 + 0] = mesh->Indices[idx * 3 + 0];
-		mesh->PxIndices[idx * 3 + 1] = mesh->Indices[idx * 3 + 1];
-		mesh->PxIndices[idx * 3 + 2] = mesh->Indices[idx * 3 + 2];
 	}
 
 	float* vxCenter = &mesh->Vertices[verticesCount * 8];
@@ -709,11 +699,6 @@ const GlConstants::Mesh* GlConstants::GetFunnel(uint verticesCount)
 	vxCenter[6] = 0.0f;
 	vxCenter[7] = 0.0f;
 
-	physx::PxVec3* pxCenter = &mesh->PxVertices[verticesCount];
-	pxCenter->x = 0.0f;
-	pxCenter->y = 0.0f;
-	pxCenter->z = 0.0f;
-
 	return mesh;
 }
 
@@ -721,13 +706,11 @@ const GlConstants::Mesh* GlConstants::GetDiamond(uint verticesCount)
 {
 	Mesh* mesh = &DIAMONDS[verticesCount];
 
-	if (mesh->PxVertices.size() != 0)
+	if (mesh->Vertices.size() != 0)
 		return mesh;
 
 	mesh->Vertices  .resize((verticesCount + 2) * 8);
 	mesh->Indices   .resize(verticesCount * 2 * 3);
-	mesh->PxVertices.resize(verticesCount + 2);
-	mesh->PxIndices .resize(verticesCount * 2 * 3);
 
 	const float radAngleStep = 1.0f / verticesCount * 6.283185307179586476925286766559f;
 	float radAngle           = 0.0f;
@@ -755,18 +738,6 @@ const GlConstants::Mesh* GlConstants::GetDiamond(uint verticesCount)
 		mesh->Indices[idx * 2 * 3 + 3] = idx;
 		mesh->Indices[idx * 2 * 3 + 4] = (idx + 1) % verticesCount;
 		mesh->Indices[idx * 2 * 3 + 5] = verticesCount + 1;
-
-		mesh->PxVertices[idx].x = angleCos;
-		mesh->PxVertices[idx].y = 40.0f;
-		mesh->PxVertices[idx].z = angleSin;
-
-		mesh->PxIndices[idx * 2 * 3 + 0] = mesh->Indices[idx * 2 * 3 + 0];
-		mesh->PxIndices[idx * 2 * 3 + 1] = mesh->Indices[idx * 2 * 3 + 1];
-		mesh->PxIndices[idx * 2 * 3 + 2] = mesh->Indices[idx * 2 * 3 + 2];
-
-		mesh->PxIndices[idx * 2 * 3 + 3] = mesh->Indices[idx * 2 * 3 + 3];
-		mesh->PxIndices[idx * 2 * 3 + 4] = mesh->Indices[idx * 2 * 3 + 4];
-		mesh->PxIndices[idx * 2 * 3 + 5] = mesh->Indices[idx * 2 * 3 + 5];
 	}
 
 	float* vxCenter = &mesh->Vertices[(verticesCount + 0) * 8];
@@ -788,16 +759,6 @@ const GlConstants::Mesh* GlConstants::GetDiamond(uint verticesCount)
 	vxCenter[5] = 0.0f;
 	vxCenter[6] = 0.0f;
 	vxCenter[7] = 0.0f;
-
-	physx::PxVec3* pxCenter = &mesh->PxVertices[verticesCount + 0];
-	pxCenter->x = 0.0f;
-	pxCenter->y = 0.8f;
-	pxCenter->z = 0.0f;
-
-	pxCenter = &mesh->PxVertices[verticesCount + 1];
-	pxCenter->x = 0.0f;
-	pxCenter->y = -0.8f;
-	pxCenter->z = 0.0f;
 
 	return mesh;
 }

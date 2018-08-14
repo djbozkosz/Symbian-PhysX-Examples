@@ -13,7 +13,7 @@ void Scene03::OnInitializeObjects()
 {
 	const GlConstants::Mesh* diamond = GlConstants::GetDiamond(DIAMOND_VERTICES_COUNT);
 
-	physx::PxConvexMesh* mesh = PhysicsEngine->CreateConvexMesh(diamond->PxVertices, diamond->PxIndices);
+	physx::PxConvexMesh* mesh = PhysicsEngine->CreateConvexMesh(diamond->Vertices, diamond->Indices);
 
 	Objects.push_back(physx::PxCreateDynamic(
 		*PhysicsEngine->GetPhysics(),
