@@ -10,7 +10,7 @@ class Scene03 : public Scene02
 	Q_OBJECT
 
 	static const uint DIAMOND_VERTICES_COUNT = 10;
-	static const uint OBJECTS_COUNT          = 1;
+	static const uint DIAMONDS_COUNT         = 50;
 
 	class Diamond : public Physics::Actor
 	{

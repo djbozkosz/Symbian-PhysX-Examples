@@ -15,13 +15,18 @@ void Scene03::OnInitializeObjects()
 
 	physx::PxConvexMesh* mesh = PhysicsEngine->CreateConvexMesh(diamond->Vertices, diamond->Indices);
 
-	Objects.push_back(physx::PxCreateDynamic(
-		*PhysicsEngine->GetPhysics(),
-		physx::PxTransform(physx::PxVec3(
-			5.0f, 20.0f, 5.0f)),
-		physx::PxConvexMeshGeometry(mesh),
-		*DefaultMaterial,
-		10.0f));
+	for (uint idx = 0; idx < DIAMONDS_COUNT; idx++)
+	{
+		Objects.push_back(physx::PxCreateDynamic(
+			*PhysicsEngine->GetPhysics(),
+			physx::PxTransform(physx::PxVec3(
+				(float)(rand() % 1000) * 0.04f - 20.0f,
+				(float)(rand() % 1000) * 0.03f + 10.0f,
+				(float)(rand() % 1000) * 0.04f - 20.0f)),
+			physx::PxConvexMeshGeometry(mesh),
+			*BoxMaterial,
+			10.0f));
 
-	PhysicsEngine->AddMesh(new Diamond(Objects.back()), QVector4D(0.2f, 1.0f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
+		PhysicsEngine->AddMesh(new Diamond(Objects.back()), QVector4D(0.2f, 1.0f, 0.2f, 128.0f), QVector2D(1.0f, 1.0f));
+	}
 }
