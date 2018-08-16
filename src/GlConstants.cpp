@@ -720,9 +720,9 @@ const GlConstants::Mesh* GlConstants::GetDiamond(uint verticesCount)
 		float angleSin = sinf(radAngle);
 		float angleCos = cosf(radAngle);
 
-		mesh->Vertices[idx * 8 + 0] = angleCos;
+		mesh->Vertices[idx * 8 + 0] = angleCos * 0.7f;
 		mesh->Vertices[idx * 8 + 1] = 0.0f;
-		mesh->Vertices[idx * 8 + 2] = angleSin;
+		mesh->Vertices[idx * 8 + 2] = angleSin * 0.7f;
 
 		mesh->Vertices[idx * 8 + 3] = angleCos;
 		mesh->Vertices[idx * 8 + 4] = 0.0f;
@@ -742,7 +742,7 @@ const GlConstants::Mesh* GlConstants::GetDiamond(uint verticesCount)
 
 	float* vxCenter = &mesh->Vertices[(verticesCount + 0) * 8];
 	vxCenter[0] = 0.0f;
-	vxCenter[1] = 0.8f;
+	vxCenter[1] = 0.5f;
 	vxCenter[2] = 0.0f;
 	vxCenter[3] = 0.0f;
 	vxCenter[4] = 1.0f;
@@ -752,7 +752,7 @@ const GlConstants::Mesh* GlConstants::GetDiamond(uint verticesCount)
 
 	vxCenter = &mesh->Vertices[(verticesCount + 1) * 8];
 	vxCenter[0] = 0.0f;
-	vxCenter[1] = -0.8f;
+	vxCenter[1] = -1.1f;
 	vxCenter[2] = 0.0f;
 	vxCenter[3] = 0.0f;
 	vxCenter[4] = -1.0f;
