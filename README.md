@@ -7,7 +7,10 @@
 ### Prerequisites
 - Installed Symbian [Qt SDK 1.2.1](https://www.mediafire.com/folder/79jhy594xb3uk/Symbian_Development) (Qt 4.7.4).
 
-### Build
+### Windows MinGW Build
+1. todo... (path, cd, build dev, build rel)
+
+### Symbian GCCE Build
 1. [Register](https://developer.nvidia.com/physx-source-github) as Nvidia developer with your GitHub account.
 2. Clone this repo with [PhysX](https://github.com/djbozkosz/PhysX-3.4) submodule (step 1 needed).
 3. Open Qt Symbian Commant Prompt.
