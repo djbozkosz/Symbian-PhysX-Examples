@@ -102,11 +102,42 @@ physx::PxTriangleMesh* Physics::CreateMesh(const QVector<float> &vertices, const
 
 physx::PxConvexMesh* Physics::CreateConvexMesh(const QVector<float>& vertices, const QVector<ushort>& indices)
 {
+	QVector<physx::PxHullPolygon> hullPolygons(indices.size() / 3);
+
+	for (int idx = 0, polygonIdx = 0; idx < indices.size(); idx += 3, polygonIdx++)
+	{
+		const float* pa = &vertices[indices[idx + 0] * 8];
+		const float* pb = &vertices[indices[idx + 1] * 8];
+		const float* pc = &vertices[indices[idx + 2] * 8];
+
+		const QVector3D a(pa[0], pa[1], pa[2]);
+		const QVector3D b(pb[0], pb[1], pb[2]);
+		const QVector3D c(pc[0], pc[1], pc[2]);
+
+		const QVector3D va(b - a);
+		const QVector3D vb(c - a);
+		const QVector3D vc = QVector3D::crossProduct(va, vb);
+		const float     d  = -(vc.x() * a.x() + vc.y() * a.y() + vc.z() * a.z());
+
+		hullPolygons[polygonIdx].mPlane[0]  = vc.x();
+		hullPolygons[polygonIdx].mPlane[1]  = vc.y();
+		hullPolygons[polygonIdx].mPlane[2]  = vc.z();
+		hullPolygons[polygonIdx].mPlane[3]  = d;
+		hullPolygons[polygonIdx].mNbVerts   = 3;
+		hullPolygons[polygonIdx].mIndexBase = idx;
+	}
+
 	physx::PxConvexMeshDesc meshDescriptor;
-	meshDescriptor.points.count  = vertices.size() / 8;
-	meshDescriptor.points.stride = sizeof(float) * 8;
-	meshDescriptor.points.data   = vertices.constData();
-	meshDescriptor.flags         = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+	meshDescriptor.points.count    = vertices.size() / 8;
+	meshDescriptor.points.stride   = sizeof(float) * 8;
+	meshDescriptor.points.data     = vertices.constData();
+	meshDescriptor.polygons.count  = hullPolygons.size();
+	meshDescriptor.polygons.stride = sizeof(physx::PxHullPolygon);
+	meshDescriptor.polygons.data   = hullPolygons.constData();
+	meshDescriptor.indices.count   = indices.size();
+	meshDescriptor.indices.stride  = sizeof(ushort);
+	meshDescriptor.indices.data    = indices.constData();
+	meshDescriptor.flags           = physx::PxConvexFlag::e16_BIT_INDICES;
 
 	physx::PxDefaultMemoryOutputStream outStream(m_AllocatorCallback);
 	m_Cooking->cookConvexMesh(meshDescriptor, outStream);
