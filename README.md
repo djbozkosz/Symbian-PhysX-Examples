@@ -1,6 +1,6 @@
 ## Symbian PhysX Examples
 [![S60: 5.3](https://img.shields.io/badge/s60-5.3-lightgrey.svg)](https://en.wikipedia.org/wiki/S60_(software_platform))
-[![Win32: MinGW](https://img.shields.io/badge/win32-mingw-lightgrey.svg)](http://www.mingw.org))
+[![Win32: MinGW](https://img.shields.io/badge/win32-mingw-lightgrey.svg)](http://www.mingw.org)
 [![PhysX: 3.4.2](https://img.shields.io/badge/physx-3.4.2-brightgreen.svg)](https://github.com/NVIDIAGameWorks/PhysX-3.4)
 [![OpenGL ES: 2.0 | 4.3](https://img.shields.io/badge/opengl%20es-2.0-brightgreen.svg)](https://www.google.com/search?q=gpu+drivers)
 [![Qt: 4.8](https://img.shields.io/badge/qt-4.8-green.svg)](https://www.qt.io)
