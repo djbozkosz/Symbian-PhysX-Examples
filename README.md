@@ -1,6 +1,6 @@
 ## Symbian PhysX Examples
 [![S60: 5.3](https://img.shields.io/badge/s60-5.3-lightgrey.svg)](https://en.wikipedia.org/wiki/S60_(software_platform))
-[![Win32: MinGW](https://img.shields.io/badge/Win32-MinGW-lightgrey.svg)](tps://en.wikipedia.org/wiki/S60_(software_pla))
+[![Win32: MinGW](https://img.shields.io/badge/win32-mingw-lightgrey.svg)](http://www.mingw.org))
 [![PhysX: 3.4.2](https://img.shields.io/badge/physx-3.4.2-brightgreen.svg)](https://github.com/NVIDIAGameWorks/PhysX-3.4)
 [![OpenGL ES: 2.0 | 4.3](https://img.shields.io/badge/opengl%20es-2.0-brightgreen.svg)](https://www.google.com/search?q=gpu+drivers)
 [![Qt: 4.8](https://img.shields.io/badge/qt-4.8-green.svg)](https://www.qt.io)
@@ -20,8 +20,6 @@
 6. Build release libs: `make.cmd`.
 7. Open `PhysXExamples.pro` and setup target platform.
 8. Build project in the usual way.
-
-1. todo... (path, cd, build dev, build rel)
 
 ### Qt Symbian Build (GCCE)
 1. Open Qt Symbian Commant Prompt.
