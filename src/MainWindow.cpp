@@ -17,6 +17,10 @@ MainWindow::MainWindow(QSplashScreen* splash, uint splashDelayMs, QWidget* paren
 	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, QSize(640, 360), qApp->desktop()->availableGeometry()));
 #endif
 
+	m_Ui->prevScene->setMaximumWidth(m_Ui->prevScene->height());
+	m_Ui->nextScene->setMaximumWidth(m_Ui->nextScene->height());
+	m_Ui->close->    setMaximumWidth(m_Ui->close->    height());
+
 	connect(m_Ui->prevScene, SIGNAL(clicked()), m_Ui->glWidget, SLOT(ActivatePrevScene()));
 	connect(m_Ui->nextScene, SIGNAL(clicked()), m_Ui->glWidget, SLOT(ActivateNextScene()));
 	connect(m_Ui->close,     SIGNAL(clicked()), qApp,          SLOT(quit()));

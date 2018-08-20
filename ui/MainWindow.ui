@@ -33,7 +33,7 @@
     <item row="1" column="1" rowspan="5">
      <widget class="GlWidget" name="glWidget" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -45,12 +45,6 @@
     </item>
     <item row="3" column="0">
      <widget class="QPushButton" name="prevScene">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
       <property name="text">
        <string>&lt;&lt;</string>
       </property>
@@ -71,12 +65,6 @@
     </item>
     <item row="5" column="0">
      <widget class="QPushButton" name="close">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
       <property name="text">
        <string>x</string>
       </property>
@@ -84,12 +72,6 @@
     </item>
     <item row="2" column="0">
      <widget class="QPushButton" name="nextScene">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
       <property name="text">
        <string>&gt;&gt;</string>
       </property>
