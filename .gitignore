@@ -7,7 +7,6 @@ bld.inf
 *.pkg
 *.rss
 *.user*
-*.sis
 ui/*.h
 moc/*.cpp
 rcc/*.cpp
@@ -18,3 +17,4 @@ build/*.o
 build/*/*.cpp
 build/*/*.h
 build/*/*.o
+build/debug/*
